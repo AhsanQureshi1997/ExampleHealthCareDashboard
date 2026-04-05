@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Primary Care Quality Dashboard Prototype</title>
+<style>
+:root{
+  --bg:#f5f7fb; --panel:#ffffff; --line:#d9e1ea; --text:#1e293b; --muted:#64748b;
+  --good-bg:#e8f7ee; --good:#166534; --warn-bg:#fff4db; --warn:#92400e;
+  --bad-bg:#fde8e8; --bad:#991b1b;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--text);background:var(--bg)}
+.wrap{max-width:1280px;margin:0 auto;padding:20px}
+.topbar,.panel,.stat{background:var(--panel);border:1px solid var(--line);border-radius:14px}
+.topbar{padding:18px 20px;margin-bottom:18px;display:flex;justify-content:space-between;gap:16px}
+.title{font-size:26px;font-weight:700;margin:0 0 6px}
+.subtitle{color:var(--muted);margin:0;line-height:1.4}
+.btns{display:flex;gap:10px;flex-wrap:wrap}
+button{border:1px solid var(--line);background:#fff;padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:600;color:var(--text)}
+button.primary{background:#0f172a;color:#fff;border-color:#0f172a}
+.grid{display:grid;grid-template-columns:360px 1fr;gap:18px}
+.panel{padding:16px}
+.panel h2{margin:0 0 14px;font-size:20px}
+.panel h3{margin:0 0 10px;font-size:16px}
+label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px;font-weight:600}
+input,select{width:100%;padding:10px 11px;border:1px solid var(--line);border-radius:10px;margin-bottom:12px;font-size:14px;background:#fff}
+.inline2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.section{margin-top:8px;padding-top:12px;border-top:1px solid #edf2f7}
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.stat{padding:14px 16px}
+.stat .k{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.stat .v{font-size:28px;font-weight:800;margin-top:6px}
+.stat .s{color:var(--muted);font-size:13px;margin-top:4px}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.metric-list{display:flex;flex-direction:column;gap:10px}
+.metric{border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.metric .name{font-weight:700;margin-bottom:3px}
+.metric .desc{color:var(--muted);font-size:13px;line-height:1.35}
+.badge{white-space:nowrap;font-weight:700;padding:8px 10px;border-radius:999px;font-size:12px;min-width:96px;text-align:center}
+.good{background:var(--good-bg);color:var(--good)}
+.warn{background:var(--warn-bg);color:var(--warn)}
+.bad{background:var(--bad-bg);color:var(--bad)}
+.narrative{margin-top:18px;background:#f8fafc;border:1px dashed var(--line);border-radius:12px;padding:14px;line-height:1.5}
+.mini,.footer-note{color:var(--muted);font-size:12px}
+.footer-note{margin-top:14px}
+@media (max-width:1040px){.grid{grid-template-columns:1fr}.cards{grid-template-columns:1fr}.summary{grid-template-columns:1fr 1fr}}
+@media (max-width:640px){.summary{grid-template-columns:1fr}.inline2{grid-template-columns:1fr}.topbar{flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div>
+      <h1 class="title">Primary Care Quality Dashboard Prototype</h1>
+      <p class="subtitle">Expanded to include preventive care and chronic disease quality indicators for primary care workflow review.</p>
+    </div>
+    <div class="btns">
+      <button onclick="loadExample()">Load Example Patient</button>
+      <button onclick="clearForm()">Clear</button>
+      <button class="primary" onclick="runAssessment()">Update Dashboard</button>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="panel">
+      <h2>Patient Check Panel</h2>
+
+      <label>Patient Name</label>
+      <input id="name" placeholder="Jane Doe">
+
+      <div class="inline2">
+        <div>
+          <label>Age</label>
+          <input id="age" type="number" min="0" max="120" placeholder="67">
+        </div>
+        <div>
+          <label>Sex</label>
+          <select id="sex">
+            <option value="">Select</option>
+            <option>Female</option>
+            <option>Male</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="inline2">
+        <div>
+          <label>Smoking Status</label>
+          <select id="smoker">
+            <option value="never">Never</option>
+            <option value="former">Former</option>
+            <option value="current">Current</option>
+          </select>
+        </div>
+        <div>
+          <label>Pack-Years</label>
+          <input id="packYears" type="number" min="0" step="1" placeholder="30">
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>Preventive Care</h3>
+        <label>Colon Cancer Screening (years since last)</label>
+        <input id="colonYears" type="number" min="0" step="0.5">
+
+        <label>Breast Cancer Screening (years since last)</label>
+        <input id="breastYears" type="number" min="0" step="0.5">
+
+        <label>Cervical Cancer Screening (years since last)</label>
+        <input id="cervicalYears" type="number" min="0" step="0.5">
+
+        <label>Lung Cancer Screening (years since last LDCT)</label>
+        <input id="lungYears" type="number" min="0" step="0.5">
+
+        <div class="inline2">
+          <div>
+            <label>Flu Vaccine</label>
+            <select id="flu"><option value="due">Due</option><option value="done">Done</option></select>
+          </div>
+          <div>
+            <label>COVID Vaccine</label>
+            <select id="covid"><option value="due">Due</option><option value="done">Done</option></select>
+          </div>
+        </div>
+
+        <div class="inline2">
+          <div>
+            <label>Pneumococcal Vaccine</label>
+            <select id="pneumo"><option value="unknown">Unknown</option><option value="due">Due</option><option value="done">Done</option></select>
+          </div>
+          <div>
+            <label>Tdap Up To Date</label>
+            <select id="tdap"><option value="unknown">Unknown</option><option value="due">Due</option><option value="done">Done</option></select>
+          </div>
+        </div>
+
+        <div class="inline2">
+          <div>
+            <label>HIV Screen</label>
+            <select id="hiv"><option value="unknown">Unknown</option><option value="due">Due</option><option value="done">Done</option></select>
+          </div>
+          <div>
+            <label>Hep C Screen</label>
+            <select id="hepc"><option value="unknown">Unknown</option><option value="due">Due</option><option value="done">Done</option></select>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>Chronic Disease Quality Indicators</h3>
+        <div class="inline2">
+          <div>
+            <label>Diabetes</label>
+            <select id="diabetes"><option value="no">No</option><option value="yes">Yes</option></select>
+          </div>
+          <div>
+            <label>Last HbA1c</label>
+            <input id="a1c" type="number" min="0" max="20" step="0.1" placeholder="8.4">
+          </div>
+        </div>
+
+        <div class="inline2">
+          <div>
+            <label>Eye Exam Up To Date</label>
+            <select id="eyeExam"><option value="unknown">Unknown</option><option value="done">Done</option><option value="due">Due</option></select>
+          </div>
+          <div>
+            <label>Foot Exam Up To Date</label>
+            <select id="footExam"><option value="unknown">Unknown</option><option value="done">Done</option><option value="due">Due</option></select>
+          </div>
+        </div>
+
+        <label>Microalbumin Up To Date</label>
+        <select id="microalbumin"><option value="unknown">Unknown</option><option value="done">Done</option><option value="due">Due</option></select>
+
+        <div class="inline2">
+          <div>
+            <label>Systolic BP</label>
+            <input id="sbp" type="number" min="50" max="250" placeholder="146">
+          </div>
+          <div>
+            <label>Diastolic BP</label>
+            <input id="dbp" type="number" min="30" max="150" placeholder="88">
+          </div>
+        </div>
+
+        <div class="inline2">
+          <div>
+            <label>CHF</label>
+            <select id="chf"><option value="no">No</option><option value="yes">Yes</option></select>
+          </div>
+          <div>
+            <label>On Guideline-Directed Therapy</label>
+            <select id="gdmt"><option value="unknown">Unknown</option><option value="yes">Yes</option><option value="no">No</option></select>
+          </div>
+        </div>
+
+        <div class="inline2">
+          <div>
+            <label>COPD / Asthma</label>
+            <select id="copd"><option value="no">No</option><option value="yes">Yes</option></select>
+          </div>
+          <div>
+            <label>Exacerbations Past Year</label>
+            <input id="exacerbations" type="number" min="0" step="1" placeholder="2">
+          </div>
+        </div>
+
+        <div class="inline2">
+          <div>
+            <label>PHQ-9 Score</label>
+            <input id="phq9" type="number" min="0" max="27" step="1" placeholder="13">
+          </div>
+          <div>
+            <label>BMI</label>
+            <input id="bmi" type="number" min="10" max="80" step="0.1" placeholder="34.2">
+          </div>
+        </div>
+
+        <div class="inline2">
+          <div>
+            <label>Substance Use Screen</label>
+            <select id="substance"><option value="negative">Negative</option><option value="positive">Positive</option><option value="unknown">Unknown</option></select>
+          </div>
+          <div>
+            <label>Counseling / Follow-up</label>
+            <select id="substanceFollowup"><option value="unknown">Unknown</option><option value="done">Done</option><option value="due">Due</option></select>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-note">Prototype logic is simplified for demonstration and workflow discussion. Not intended for live clinical decision-making.</div>
+    </div>
+
+    <div>
+      <div class="summary">
+        <div class="stat"><div class="k">Total Gaps</div><div class="v" id="totalGaps">0</div><div class="s">Items needing follow-up</div></div>
+        <div class="stat"><div class="k">Preventive</div><div class="v" id="preventiveCount">0</div><div class="s">Overdue or unknown</div></div>
+        <div class="stat"><div class="k">Chronic Disease</div><div class="v" id="chronicCount">0</div><div class="s">Quality gaps</div></div>
+        <div class="stat"><div class="k">Risk Flag</div><div class="v" id="riskFlag">Low</div><div class="s">Simple prototype score</div></div>
+      </div>
+
+      <div class="cards">
+        <div class="panel">
+          <h2>Preventive Care Status</h2>
+          <div id="preventiveList" class="metric-list"></div>
+        </div>
+        <div class="panel">
+          <h2>Chronic Disease Quality Metrics</h2>
+          <div id="chronicList" class="metric-list"></div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top:18px">
+        <h2>Clinician Snapshot</h2>
+        <div id="snapshot" class="narrative">Enter patient information and click <strong>Update Dashboard</strong>.</div>
+        <div class="mini" style="margin-top:10px">Designed for rapid pre-visit review of care gaps.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function el(id){return document.getElementById(id);}
+function metricHTML(name, desc, status, cls){
+  return '<div class="metric"><div><div class="name">'+name+'</div><div class="desc">'+desc+'</div></div><div class="badge '+cls+'">'+status+'</div></div>';
+}
+function statusFromYears(years, dueThreshold, soonThreshold){
+  if(years === '' || isNaN(Number(years))) return {status:'Unknown', cls:'warn'};
+  years = Number(years);
+  if(years >= dueThreshold) return {status:'Overdue', cls:'bad'};
+  if(years >= soonThreshold) return {status:'Due Soon', cls:'warn'};
+  return {status:'Up to date', cls:'good'};
+}
+function statusFromSelect(value){
+  if(value === 'done' || value === 'yes' || value === 'negative') return {status:'Up to date', cls:'good'};
+  if(value === 'due' || value === 'no' || value === 'positive') return {status:'Needs action', cls:'bad'};
+  return {status:'Unknown', cls:'warn'};
+}
+function runAssessment(){
+  const age = Number(el('age').value || 0), sex = el('sex').value, smoker = el('smoker').value;
+  const packYears = Number(el('packYears').value || 0), diabetes = el('diabetes').value === 'yes';
+  const chf = el('chf').value === 'yes', copd = el('copd').value === 'yes';
+  const sbp = Number(el('sbp').value || 0), dbp = Number(el('dbp').value || 0);
+  const a1c = Number(el('a1c').value || 0), phq9 = Number(el('phq9').value || 0);
+  const bmi = Number(el('bmi').value || 0), exacerbations = Number(el('exacerbations').value || 0);
+
+  let preventive = [], chronic = [], preventiveGaps = 0, chronicGaps = 0, riskPoints = 0;
+
+  if(age >= 45 && age <= 75) preventive.push(Object.assign({name:'Colon cancer screening', desc:'Age 45–75 screening review'}, statusFromYears(el('colonYears').value, 10, 8)));
+  if(sex === 'Female' && age >= 40 && age <= 74) preventive.push(Object.assign({name:'Breast cancer screening', desc:'Mammography interval review'}, statusFromYears(el('breastYears').value, 2, 1.5)));
+  if(sex === 'Female' && age >= 21 && age <= 65) preventive.push(Object.assign({name:'Cervical cancer screening', desc:'Pap / HPV screening review'}, statusFromYears(el('cervicalYears').value, 5, 3)));
+  if(age >= 50 && age <= 80 && (smoker === 'current' || smoker === 'former') && packYears >= 20) preventive.push(Object.assign({name:'Lung cancer screening', desc:'Annual low-dose CT eligibility'}, statusFromYears(el('lungYears').value, 1.1, 0.8)));
+
+  [['flu','Influenza vaccine'],['covid','COVID vaccine'],['pneumo','Pneumococcal vaccine'],['tdap','Tdap'],['hiv','HIV screen'],['hepc','Hepatitis C screen']].forEach(function(pair){
+    preventive.push(Object.assign({name:pair[1], desc:'Preventive care review'}, statusFromSelect(el(pair[0]).value)));
+  });
+
+  preventive.forEach(function(m){ if(m.cls !== 'good') preventiveGaps++; if(m.cls === 'bad') riskPoints++; });
+
+  if(diabetes){
+    let a1cStatus = {status:'Unknown', cls:'warn'};
+    if(a1c){ if(a1c < 7) a1cStatus = {status:'At goal', cls:'good'}; else if(a1c < 9) a1cStatus = {status:'Above goal', cls:'warn'}; else a1cStatus = {status:'Poor control', cls:'bad'}; }
+    chronic.push(Object.assign({name:'Diabetes control', desc:'HbA1c quality indicator'}, a1cStatus));
+    [['eyeExam','Retinal exam'],['footExam','Foot exam'],['microalbumin','Microalbumin']].forEach(function(pair){
+      chronic.push(Object.assign({name:pair[1], desc:'Annual diabetes monitoring'}, statusFromSelect(el(pair[0]).value)));
+    });
+  }
+
+  if(sbp || dbp){
+    let bpStatus = {status:'Unknown', cls:'warn'};
+    if(sbp < 130 && dbp < 80) bpStatus = {status:'Controlled', cls:'good'};
+    else if(sbp < 140 && dbp < 90) bpStatus = {status:'Borderline', cls:'warn'};
+    else bpStatus = {status:'Uncontrolled', cls:'bad'};
+    chronic.push(Object.assign({name:'Hypertension', desc:'Blood pressure target review'}, bpStatus));
+  }
+
+  if(chf){
+    let s = {status:'Unknown', cls:'warn'};
+    if(el('gdmt').value === 'yes') s = {status:'Addressed', cls:'good'};
+    else if(el('gdmt').value === 'no') s = {status:'Needs review', cls:'bad'};
+    chronic.push(Object.assign({name:'Heart failure therapy', desc:'Guideline-directed therapy review'}, s));
+  }
+
+  if(copd){
+    let s = {status:'Stable', cls:'good'};
+    if(exacerbations >= 2) s = {status:'High risk', cls:'bad'};
+    else if(exacerbations === 1) s = {status:'Monitor', cls:'warn'};
+    chronic.push(Object.assign({name:'COPD / asthma control', desc:'Exacerbations and maintenance review'}, s));
+  }
+
+  if(phq9){
+    let s = {status:'Mild / minimal', cls:'good'};
+    if(phq9 >= 10 && phq9 < 15) s = {status:'Moderate', cls:'warn'};
+    if(phq9 >= 15) s = {status:'High symptom burden', cls:'bad'};
+    chronic.push(Object.assign({name:'Mental health screening', desc:'PHQ-9 symptom review'}, s));
+  }
+
+  if(bmi){
+    let s = {status:'Within range', cls:'good'};
+    if(bmi >= 30 && bmi < 40) s = {status:'Counseling indicated', cls:'warn'};
+    if(bmi >= 40) s = {status:'High-risk obesity', cls:'bad'};
+    chronic.push(Object.assign({name:'Obesity', desc:'BMI and lifestyle follow-up'}, s));
+  }
+
+  let substance = {status:'Negative', cls:'good'};
+  if(el('substance').value === 'positive' && el('substanceFollowup').value !== 'done') substance = {status:'Needs follow-up', cls:'bad'};
+  else if(el('substance').value === 'positive' && el('substanceFollowup').value === 'done') substance = {status:'Follow-up documented', cls:'warn'};
+  else if(el('substance').value === 'unknown') substance = {status:'Unknown', cls:'warn'};
+  chronic.push(Object.assign({name:'Substance use', desc:'Screening and counseling follow-up'}, substance));
+
+  chronic.forEach(function(m){ if(m.cls !== 'good') chronicGaps++; if(m.cls === 'bad') riskPoints++; });
+
+  el('preventiveList').innerHTML = preventive.length ? preventive.map(function(m){ return metricHTML(m.name, m.desc, m.status, m.cls); }).join('') : '<div class="mini">No preventive rules triggered.</div>';
+  el('chronicList').innerHTML = chronic.length ? chronic.map(function(m){ return metricHTML(m.name, m.desc, m.status, m.cls); }).join('') : '<div class="mini">No chronic disease metrics triggered.</div>';
+
+  const total = preventiveGaps + chronicGaps;
+  let risk = 'Low'; if(riskPoints >= 5) risk = 'High'; else if(riskPoints >= 2) risk = 'Moderate';
+  el('totalGaps').textContent = total;
+  el('preventiveCount').textContent = preventiveGaps;
+  el('chronicCount').textContent = chronicGaps;
+  el('riskFlag').textContent = risk;
+
+  const name = el('name').value || 'This patient';
+  let problems = [];
+  preventive.concat(chronic).forEach(function(m){ if(m.cls === 'bad') problems.push(m.name.toLowerCase()); });
+  let summary = name + ' has ' + total + ' identified care gaps, including ' + preventiveGaps + ' preventive items and ' + chronicGaps + ' chronic disease quality concerns. ';
+  if(problems.length) summary += 'Highest-priority issues include ' + problems.slice(0,5).join(', ') + '. ';
+  summary += 'This prototype supports rapid pre-visit review and gap closure planning.';
+  el('snapshot').textContent = summary;
+}
+function clearForm(){
+  document.querySelectorAll('input').forEach(function(x){ x.value=''; });
+  document.querySelectorAll('select').forEach(function(x){ x.selectedIndex=0; });
+  el('smoker').value='never'; el('flu').value='due'; el('covid').value='due'; runAssessment();
+}
+function loadExample(){
+  el('name').value='Maria R.'; el('age').value='67'; el('sex').value='Female'; el('smoker').value='former'; el('packYears').value='32';
+  el('colonYears').value='12'; el('breastYears').value='3'; el('cervicalYears').value='6'; el('lungYears').value='2';
+  el('flu').value='due'; el('covid').value='done'; el('pneumo').value='due'; el('tdap').value='unknown'; el('hiv').value='unknown'; el('hepc').value='done';
+  el('diabetes').value='yes'; el('a1c').value='8.6'; el('eyeExam').value='due'; el('footExam').value='done'; el('microalbumin').value='due';
+  el('sbp').value='148'; el('dbp').value='88'; el('chf').value='yes'; el('gdmt').value='no';
+  el('copd').value='yes'; el('exacerbations').value='2'; el('phq9').value='11'; el('bmi').value='35.8';
+  el('substance').value='positive'; el('substanceFollowup').value='due'; runAssessment();
+}
+runAssessment();
+</script>
+</body>
+</html>
