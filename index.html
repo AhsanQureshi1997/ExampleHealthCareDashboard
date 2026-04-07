@@ -950,9 +950,9 @@ const patients = [
       ["Shared","Reassess risk after next wearable upload","Declining recovery trend","Tomorrow","Medium"]
     ],
     wearableCharts:[
-      ["Daily steps","Last 7 days","steps",6500,[6200,5900,5300,4700,4200,3900,3600]],
-      ["Resting heart rate","Last 7 days","bpm",71,[71,72,73,74,75,77,78]],
-      ["Sleep duration","Last 7 days","hours",7.0,[6.9,6.8,6.7,6.3,6.1,6.2,5.9]],
+      ["HbA1c","Last 6 months","%",7.0,[8.8,8.5,8.2,8.9,9.0,9.2]],
+      ["LDL","Last 6 months","mg/dL",100,[130,125,140,135,138,142]],
+      ["Blood Pressure (SBP)","Last 7 days","mmHg",120,[128,130,132,135,138,140,142]],
       ["Daily weight","Last 4 days","lb",172.0,[172.4,173.1,174.2,175.0]]
     ]
   },
@@ -1102,7 +1102,7 @@ const patients = [
       ["Shared","Confirm transportation plan","Rural access remains a barrier","This week","Low"]
     ],
     wearableCharts:[
-      ["Systolic BP","Last 7 days","mmHg",132,[136,134,138,142,144,138,137]],
+      ["Blood Pressure (SBP)","Last 7 days","mmHg",120,[136,134,138,142,144,138,137]],
       ["Sleep duration","Last 7 days","hours",6.5,[5.6,5.9,5.3,5.8,5.7,6.0,5.8]],
       ["Daily steps","Last 7 days","steps",4200,[2500,2900,3100,3300,3600,3800,4100]],
       ["Resting heart rate","Last 7 days","bpm",74,[78,77,77,76,76,75,75]]
@@ -1191,7 +1191,10 @@ function lineChartSVG(values, baseline, color){
   const line = values.map((v, i) => `${i===0 ? 'M' : 'L'} ${x(i)} ${y(v)}`).join(' ');
   const area = `M ${x(0)} ${h-pad} ` + values.map((v, i) => `L ${x(i)} ${y(v)}`).join(' ') + ` L ${x(values.length-1)} ${h-pad} Z`;
   const baseY = y(baseline);
-  const points = values.map((v, i) => `<circle cx="${x(i)}" cy="${y(v)}" r="3.3" fill="${color}" />`).join('');
+  const points = values.map((v, i) => `
+      <circle cx="${x(i)}" cy="${y(v)}" r="3.3" fill="${color}" />
+      <text x="${x(i)}" y="${y(v) - 8}" font-size="10" text-anchor="middle" fill="#1f2d3d">${v}</text>
+    `).join('');
   return `
     <svg viewBox="0 0 ${w} ${h}">
       <line x1="${pad}" y1="${baseY}" x2="${w-pad}" y2="${baseY}" stroke="#cfd8e6" stroke-width="2" stroke-dasharray="5 5"></line>
