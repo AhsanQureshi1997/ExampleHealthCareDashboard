@@ -417,7 +417,7 @@ h1{
 .status.bad{background:#fde8e8; color:#991b1b}
 .chart-grid{
   display:grid;
-  grid-template-columns:1fr 1fr;
+  grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
   gap:14px;
 }
 .chart-card{
@@ -608,15 +608,123 @@ h1{
   opacity:1;
   transform:translateY(0);
 }
+
+.view-toggle{
+  display:flex;
+  gap:8px;
+  margin-top:14px;
+}
+.mode-btn{
+  padding:10px 14px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  background:#fff;
+  font-weight:800;
+  font-size:13px;
+  color:#28425d;
+  cursor:pointer;
+}
+.mode-btn.active{
+  background:#eaf0ff;
+  border-color:#9eb6f3;
+}
+.app-mode{display:none;}
+.app-mode.active{display:block;}
+.pop-layout{
+  display:grid;
+  grid-template-columns:300px 1fr;
+  gap:16px;
+  align-items:start;
+  margin-top:16px;
+}
+.filter-panel{
+  padding:16px;
+  position:sticky;
+  top:12px;
+}
+.filter-group{margin-bottom:18px;}
+.filter-title{
+  font-size:13px;
+  font-weight:900;
+  color:#5d7088;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  margin-bottom:10px;
+}
+.filter-chip-row{display:flex; flex-wrap:wrap; gap:8px;}
+.filter-chip{
+  border:1px solid #d7dfeb;
+  background:#fff;
+  border-radius:999px;
+  padding:8px 11px;
+  font-size:12px;
+  font-weight:800;
+  cursor:pointer;
+  color:#314861;
+}
+.filter-chip.active{background:#eaf0ff;border-color:#9eb6f3;color:#2148b7;}
+.pop-summary-grid{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:12px;
+  margin-bottom:16px;
+}
+.pop-card{
+  border:1px solid #d5ddec;
+  border-radius:18px;
+  padding:14px 16px 12px;
+  background:#fbfcff;
+}
+.pop-card-label{font-size:13px;font-weight:800;color:#506882;margin-bottom:8px;}
+.pop-card-value{font-size:28px;font-weight:900;line-height:1;}
+.pop-card-sub{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.35;}
+.cohort-chip-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.cohort-chip{
+  padding:8px 12px;
+  border-radius:999px;
+  border:1px solid var(--border);
+  background:#fff;
+  font-weight:800;
+  font-size:12px;
+  cursor:pointer;
+  color:#28425d;
+}
+.cohort-chip.active{background:#eaf0ff;border-color:#9eb6f3;color:#2148b7;}
+.registry-table{width:100%;border-collapse:collapse;font-size:14px;}
+.registry-table th,.registry-table td{
+  text-align:left;
+  padding:12px 10px;
+  border-bottom:1px solid var(--border);
+  vertical-align:top;
+}
+.registry-table th{
+  color:var(--muted);
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+}
+.registry-row-btn{
+  border:none;
+  background:transparent;
+  padding:0;
+  font:inherit;
+  color:#2148b7;
+  font-weight:800;
+  cursor:pointer;
+}
+.registry-sub{display:block;color:var(--muted);font-size:12px;margin-top:4px;}
+.mini-note{font-size:12px;color:var(--muted);margin-top:8px;}
+
 @media (max-width:1400px){
   .metric-grid{grid-template-columns:repeat(2,1fr)}
-  .grid2,.detail-grid,.columns2,.chart-grid{grid-template-columns:1fr}
+  .grid2,.detail-grid,.columns2,.chart-grid,.pop-summary-grid{grid-template-columns:1fr 1fr}
 }
 @media (max-width:980px){
   .layout{grid-template-columns:1fr}
   .top{flex-direction:column}
-  .sidebar{position:static}
+  .sidebar,.filter-panel{position:static}
   .event{grid-template-columns:1fr}
+  .pop-layout,.pop-summary-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -634,6 +742,12 @@ h1{
     </div>
   </div>
 
+  <div class="view-toggle">
+    <button class="mode-btn active" id="patientModeBtn" onclick="setMode('patient')">Patient View</button>
+    <button class="mode-btn" id="populationModeBtn" onclick="setMode('population')">Population Health View</button>
+  </div>
+
+  <div id="patientMode" class="app-mode active">
   <div class="layout">
     <div class="panel sidebar">
       <div class="section-label">Patients in care coordination<br>queue</div>
@@ -693,7 +807,7 @@ h1{
             <div class="metric-value" id="tasksMetric">5</div>
           </div>
           <div class="metric">
-            <div class="metric-label">Wearable trend</div>
+            <div class="metric-label">Trend status</div>
             <div class="metric-value" id="trendMetric">Declining</div>
           </div>
         </div>
@@ -766,8 +880,8 @@ h1{
           <div class="panel content-panel">
             <div class="header-row">
               <div>
-                <div class="content-title">Wearables and recovery trend</div>
-                <div class="content-sub">Multiple daily signals to support early outreach after discharge.</div>
+                <div class="content-title">Clinical and recovery trends</div>
+                <div class="content-sub">Condition-specific trends and recovery signals shown only when clinically relevant.</div>
               </div>
               <div class="count-pill" id="wearableSummaryPill">7-day trend</div>
             </div>
@@ -844,12 +958,70 @@ h1{
             <div class="content-sub snapshot" id="snapshotText"></div>
           </div>
           <div class="detail-card">
-            <div class="detail-title">Wearable quick view</div>
+            <div class="detail-title">Trend quick view</div>
             <div class="content-sub" id="snapshotWearable"></div>
           </div>
         </div>
       </div>
 
+    </div>
+  </div>
+  </div>
+
+  <div id="populationMode" class="app-mode">
+    <div class="pop-layout">
+      <div class="panel filter-panel">
+        <div class="section-label">Population filters</div>
+
+        <div class="filter-group">
+          <div class="filter-title">Preset cohorts</div>
+          <div class="filter-chip-row" id="cohortFilters"></div>
+        </div>
+
+        <div class="filter-group">
+          <div class="filter-title">Risk</div>
+          <div class="filter-chip-row" id="riskFilters"></div>
+        </div>
+
+        <div class="filter-group">
+          <div class="filter-title">Focus area</div>
+          <div class="filter-chip-row" id="focusFilters"></div>
+        </div>
+
+        <div class="mini-note">This first population layer is a triage queue. Clicking a patient sends the user back to the detailed patient coordination view.</div>
+      </div>
+
+      <div>
+        <div class="pop-summary-grid" id="populationSummary"></div>
+
+        <div class="panel content-panel">
+          <div class="header-row">
+            <div>
+              <div class="content-title">Population outreach registry</div>
+              <div class="content-sub">Start with a cohort, narrow the queue, then open the detailed patient dashboard to act.</div>
+            </div>
+            <div class="count-pill" id="populationCountPill">0 patients</div>
+          </div>
+
+          <div class="cohort-chip-row" id="quickCohorts"></div>
+
+          <table class="registry-table">
+            <thead>
+              <tr>
+                <th>Patient</th>
+                <th>Risk</th>
+                <th>Primary issue</th>
+                <th>Key care gaps</th>
+                <th>Latest A1c</th>
+                <th>Latest LDL</th>
+                <th>Latest BP</th>
+                <th>Next action</th>
+              </tr>
+            </thead>
+            <tbody id="populationTable"></tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -895,7 +1067,7 @@ const patients = [
     barriers:[
       ["Transportation barrier for clinic visit","CHW documented"],
       ["Unclear diuretic instructions after discharge","Hospital discharge review"],
-      ["Low daily step count since discharge","Wearable trend"],
+      ["Low daily step count since discharge","Trend status"],
       ["Missed blood pressure log uploads","Remote monitoring"]
     ],
     actions:[
@@ -913,7 +1085,7 @@ const patients = [
     alerts:[
       {tone:"bad", title:"No completed primary care follow-up after discharge", sub:"Patient has not yet seen outpatient team 4 days after discharge."},
       {tone:"warn", title:"Weight up 2.6 lb over 3 days", sub:"Could represent early fluid retention after hospitalization."},
-      {tone:"warn", title:"Activity down 38% from baseline", sub:"Wearable trend suggests poor recovery trajectory."},
+      {tone:"warn", title:"Activity down 38% from baseline", sub:"Trend status suggests poor recovery trajectory."},
       {tone:"good", title:"CHW outreach request already accepted", sub:"Community follow-up pathway is active."}
     ],
     preventive:[
@@ -949,11 +1121,12 @@ const patients = [
       ["FQHC","Schedule PCP follow-up within 48 hours","No post-discharge visit documented","48h","High"],
       ["Shared","Reassess risk after next wearable upload","Declining recovery trend","Tomorrow","Medium"]
     ],
-    wearableCharts:[
-      ["HbA1c","Last 6 months","%",7.0,[8.8,8.5,8.2,8.9,9.0,9.2]],
-      ["LDL","Last 6 months","mg/dL",100,[130,125,140,135,138,142]],
-      ["Blood Pressure (SBP)","Last 7 days","mmHg",120,[128,130,132,135,138,140,142]],
-      ["Daily weight","Last 4 days","lb",172.0,[172.4,173.1,174.2,175.0]]
+    trendCharts:[
+      ["HbA1c","Last 6 months","%",7.0,[8.8,8.5,8.2,8.9,9.0,9.2],["Oct","Nov","Dec","Jan","Feb","Mar"]],
+      ["LDL","Last 6 months","mg/dL",100,[130,125,140,135,138,142],["Oct","Nov","Dec","Jan","Feb","Mar"]],
+      ["Blood Pressure","Last 7 days","mmHg",120,{systolic:[128,130,132,135,138,140,142],diastolic:[82,84,85,88,90,92,94],dates:["3/25","3/26","3/27","3/28","3/29","3/30","3/31"]}],
+      ["Daily weight","Last 4 days","lb",172.0,[172.4,173.1,174.2,175.0],["3/28","3/29","3/30","3/31"]],
+      ["Daily steps","Last 7 days","steps",6500,[6200,5900,5300,4700,4200,3900,3600],["3/25","3/26","3/27","3/28","3/29","3/30","3/31"]]
     ]
   },
   {
@@ -1025,11 +1198,11 @@ const patients = [
       ["FQHC","Complete new patient intake","Needs continuity after ED discharge","This week","Medium"],
       ["Shared","Document tobacco cessation plan","Quality metric and longitudinal goal","This week","Low"]
     ],
-    wearableCharts:[
-      ["Daily steps","Last 7 days","steps",5200,[2800,3400,3900,4300,4700,5000,5100]],
-      ["Resting heart rate","Last 7 days","bpm",76,[82,81,80,79,78,77,77]],
-      ["Sleep duration","Last 7 days","hours",6.8,[5.8,6.1,6.3,6.4,6.5,6.7,6.8]],
-      ["Pulse oximetry","Last 7 days","%",95,[93,93,94,94,95,95,95]]
+    trendCharts:[
+      ["Blood Pressure","Last 7 days","mmHg",120,{systolic:[154,152,150,149,148,148,146],diastolic:[96,95,94,93,92,91,90],dates:["3/24","3/25","3/26","3/27","3/28","3/29","3/30"]}],
+      ["Pulse oximetry","Last 7 days","%",95,[93,93,94,94,95,95,95],["3/24","3/25","3/26","3/27","3/28","3/29","3/30"]],
+      ["Resting heart rate","Last 7 days","bpm",76,[82,81,80,79,78,77,77],["3/24","3/25","3/26","3/27","3/28","3/29","3/30"]],
+      ["Daily steps","Last 7 days","steps",5200,[2800,3400,3900,4300,4700,5000,5100],["3/24","3/25","3/26","3/27","3/28","3/29","3/30"]]
     ]
   },
   {
@@ -1101,14 +1274,78 @@ const patients = [
       ["FQHC","Complete postpartum mood screening","Behavioral health follow-up still open","This week","High"],
       ["Shared","Confirm transportation plan","Rural access remains a barrier","This week","Low"]
     ],
-    wearableCharts:[
-      ["Blood Pressure (SBP)","Last 7 days","mmHg",120,[136,134,138,142,144,138,137]],
-      ["Sleep duration","Last 7 days","hours",6.5,[5.6,5.9,5.3,5.8,5.7,6.0,5.8]],
-      ["Daily steps","Last 7 days","steps",4200,[2500,2900,3100,3300,3600,3800,4100]],
-      ["Resting heart rate","Last 7 days","bpm",74,[78,77,77,76,76,75,75]]
+    trendCharts:[
+      ["Blood Pressure","Last 7 days","mmHg",120,{systolic:[136,134,138,142,144,138,137],diastolic:[84,82,85,88,90,87,86],dates:["3/25","3/26","3/27","3/28","3/29","3/30","3/31"]}],
+      ["Sleep duration","Last 7 days","hours",6.5,[5.6,5.9,5.3,5.8,5.7,6.0,5.8],["3/25","3/26","3/27","3/28","3/29","3/30","3/31"]],
+      ["Daily steps","Last 7 days","steps",4200,[2500,2900,3100,3300,3600,3800,4100],["3/25","3/26","3/27","3/28","3/29","3/30","3/31"]],
+      ["Resting heart rate","Last 7 days","bpm",74,[78,77,77,76,76,75,75],["3/25","3/26","3/27","3/28","3/29","3/30","3/31"]]
     ]
   }
 ];
+
+const populationConfig = {
+  mode:"all",
+  risk:"all",
+  focus:"all"
+};
+
+const presetCohorts = [
+  ["all","All active patients"],
+  ["postdischarge","Post-discharge follow-up gaps"],
+  ["chronic","Uncontrolled chronic disease"],
+  ["maternal","Maternal child health"],
+  ["substance","Substance use outreach"]
+];
+
+const focusAreas = [
+  ["all","All focus areas"],
+  ["diabetes","Diabetes"],
+  ["hypertension","Hypertension"],
+  ["maternal","Maternal"],
+  ["substance","Substance use"],
+  ["preventive","Preventive gaps"]
+];
+
+const riskAreas = [
+  ["all","All risk levels"],
+  ["High","High"],
+  ["Medium","Medium"]
+];
+
+const populationPatients = [
+  {
+    patientIndex:0,
+    issue:"CHF post-discharge instability",
+    gaps:["PCP follow-up overdue","Retinal exam due"],
+    a1c:"9.2%",
+    ldl:"142",
+    bp:"142/94",
+    tags:["postdischarge","chronic","diabetes","hypertension","preventive"],
+    nextAction:"Home visit today"
+  },
+  {
+    patientIndex:1,
+    issue:"COPD exacerbation with active tobacco use",
+    gaps:["Controller inhaler access","Tobacco cessation plan open"],
+    a1c:"—",
+    ldl:"—",
+    bp:"148/92",
+    tags:["postdischarge","substance","hypertension","preventive"],
+    nextAction:"Medication access outreach"
+  },
+  {
+    patientIndex:2,
+    issue:"Postpartum hypertension follow-up",
+    gaps:["Mood screening due","Home cuff sync not closed"],
+    a1c:"—",
+    ldl:"—",
+    bp:"137/86",
+    tags:["maternal","hypertension","preventive"],
+    nextAction:"Review BP uploads"
+  }
+];
+
+let appMode = "patient";
 
 let selected = 0;
 
@@ -1181,38 +1418,86 @@ function renderTaskRows(tasks){
     </tr>
   `).join("");
 }
-function lineChartSVG(values, baseline, color){
-  const w = 360, h = 150, pad = 18;
-  const min = Math.min(...values, baseline);
-  const max = Math.max(...values, baseline);
+function lineChartSVG(values, baseline, color, dates=null, secondary=null){
+  const w = 360, h = 170, pad = 35;
+
+  const allVals = secondary ? values.concat(secondary) : values;
+  const min = Math.min(...allVals, baseline);
+  const max = Math.max(...allVals, baseline);
   const range = Math.max(1, max - min);
+
   const x = i => pad + (i * ((w - pad * 2) / Math.max(1, values.length - 1)));
   const y = v => h - pad - ((v - min) / range) * (h - pad * 2);
-  const line = values.map((v, i) => `${i===0 ? 'M' : 'L'} ${x(i)} ${y(v)}`).join(' ');
-  const area = `M ${x(0)} ${h-pad} ` + values.map((v, i) => `L ${x(i)} ${y(v)}`).join(' ') + ` L ${x(values.length-1)} ${h-pad} Z`;
+
+  const makeLine = (arr) =>
+    arr.map((v, i) => `${i===0 ? 'M' : 'L'} ${x(i)} ${y(v)}`).join(' ');
+
+  const mainLine = makeLine(values);
+  const secondaryLine = secondary ? makeLine(secondary) : null;
   const baseY = y(baseline);
-  const points = values.map((v, i) => `
-      <circle cx="${x(i)}" cy="${y(v)}" r="3.3" fill="${color}" />
-      <text x="${x(i)}" y="${y(v) - 8}" font-size="10" text-anchor="middle" fill="#1f2d3d">${v}</text>
-    `).join('');
+
+  const yTicks = [min, Math.round((min + max) / 2), max];
+  const yAxis = yTicks.map(v => `
+    <text x="${pad - 8}" y="${y(v)+3}" font-size="10" text-anchor="end" fill="#62768f">${v}</text>
+    <line x1="${pad}" y1="${y(v)}" x2="${w-pad}" y2="${y(v)}" stroke="#eef2f8"/>
+  `).join('');
+
+  const xAxis = dates ? dates.map((d, i) => `
+    <text x="${x(i)}" y="${h-5}" font-size="10" text-anchor="middle" fill="#62768f">${d}</text>
+  `).join('') : '';
+
+  const mainPoints = values.map((v, i) => `
+    <circle cx="${x(i)}" cy="${y(v)}" r="3.2" fill="${color}" />
+    <text x="${x(i)}" y="${y(v)-8}" font-size="10" text-anchor="middle" fill="#1f2d3d">${v}</text>
+  `).join('');
+
+  const secondaryPoints = secondary ? secondary.map((v, i) => `
+    <circle cx="${x(i)}" cy="${y(v)}" r="3" fill="#b8341d" />
+    <text x="${x(i)}" y="${y(v)-8}" font-size="10" text-anchor="middle" fill="#b8341d">${v}</text>
+  `).join('') : '';
+
   return `
     <svg viewBox="0 0 ${w} ${h}">
-      <line x1="${pad}" y1="${baseY}" x2="${w-pad}" y2="${baseY}" stroke="#cfd8e6" stroke-width="2" stroke-dasharray="5 5"></line>
-      <path d="${area}" fill="${color}" opacity="0.08"></path>
-      <path d="${line}" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>
-      ${points}
+      <line x1="${pad}" y1="${pad}" x2="${pad}" y2="${h-pad}" stroke="#cfd8e6"/>
+      <line x1="${pad}" y1="${h-pad}" x2="${w-pad}" y2="${h-pad}" stroke="#cfd8e6"/>
+      ${yAxis}
+      <line x1="${pad}" y1="${baseY}" x2="${w-pad}" y2="${baseY}" stroke="#cfd8e6" stroke-dasharray="5 5"></line>
+      <path d="${mainLine}" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>
+      ${secondaryLine ? `<path d="${secondaryLine}" fill="none" stroke="#b8341d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>` : ""}
+      ${mainPoints}
+      ${secondaryPoints}
+      ${xAxis}
     </svg>
   `;
 }
 function renderCharts(charts){
-  const colors = ["#2559d6","#178b57","#6941c6","#bc7a00"];
-  return charts.map((c, i) => `
-    <div class="chart-card">
-      <div class="chart-title">${c[0]}</div>
-      <div class="chart-meta">${c[1]} · baseline ${c[3]} ${c[2]}</div>
-      ${lineChartSVG(c[4], c[3], colors[i % colors.length])}
-    </div>
-  `).join("");
+  const colors = ["#2559d6","#178b57","#6941c6","#bc7a00", "#0f766e", "#7c3aed"];
+
+  return charts.map((c, i) => {
+    const series = c[4];
+    const isDualLine = series && !Array.isArray(series) && typeof series === "object" && Array.isArray(series.systolic);
+
+    if(isDualLine){
+      return `
+        <div class="chart-card">
+          <div class="chart-title">${c[0]}</div>
+          <div class="chart-meta">${c[1]} · baseline ${c[3]} ${c[2]}</div>
+          ${lineChartSVG(series.systolic, c[3], "#2559d6", series.dates || null, series.diastolic || null)}
+          <div class="legend-row">
+            <span><i class="swatch" style="background:#2559d6"></i>Systolic</span>
+            <span><i class="swatch" style="background:#b8341d"></i>Diastolic</span>
+          </div>
+        </div>
+      `;
+    }
+    return `
+      <div class="chart-card">
+        <div class="chart-title">${c[0]}</div>
+        <div class="chart-meta">${c[1]} · baseline ${c[3]} ${c[2]}</div>
+        ${lineChartSVG(series, c[3], colors[i % colors.length], c[5] || null)}
+      </div>
+    `;
+  }).join("");
 }
 function snapshotText(p){
   const activeAlerts = p.alerts.filter(a => a.tone !== "good");
@@ -1252,7 +1537,7 @@ function exportSummary(){
     "Risk: " + p.risk,
     "Open care gaps: " + p.openGaps,
     "Shared tasks: " + p.sharedTasks,
-    "Wearable trend: " + p.trend,
+    "Trend status: " + p.trend,
     "",
     "Conditions: " + p.conditions.join(", "),
     "",
@@ -1286,6 +1571,109 @@ function exportSummary(){
   URL.revokeObjectURL(url);
   showToast("Summary exported");
 }
+function setMode(mode){
+  appMode = mode;
+  document.getElementById("patientMode").classList.toggle("active", mode === "patient");
+  document.getElementById("populationMode").classList.toggle("active", mode === "population");
+  document.getElementById("patientModeBtn").classList.toggle("active", mode === "patient");
+  document.getElementById("populationModeBtn").classList.toggle("active", mode === "population");
+}
+
+function renderFilterChips(hostId, items, selectedValue, clickHandler){
+  document.getElementById(hostId).innerHTML = items.map(([value,label]) => `
+    <button class="filter-chip ${selectedValue===value?'active':''}" onclick="${clickHandler}('${value}')">${label}</button>
+  `).join('');
+}
+
+function setPopulationCohort(value){
+  populationConfig.mode = value;
+  renderPopulationView();
+}
+function setPopulationRisk(value){
+  populationConfig.risk = value;
+  renderPopulationView();
+}
+function setPopulationFocus(value){
+  populationConfig.focus = value;
+  renderPopulationView();
+}
+
+function getPopulationRows(){
+  return populationPatients.filter(row => {
+    const patient = patients[row.patientIndex];
+    const cohortMatch = populationConfig.mode === 'all' || row.tags.includes(populationConfig.mode);
+    const riskMatch = populationConfig.risk === 'all' || patient.risk === populationConfig.risk;
+    const focusMatch = populationConfig.focus === 'all' || row.tags.includes(populationConfig.focus);
+    return cohortMatch && riskMatch && focusMatch;
+  });
+}
+
+function openPatientFromPopulation(i){
+  selectPatient(i);
+  setMode('patient');
+  showToast('Opened patient view');
+}
+
+function renderPopulationSummary(rows){
+  const high = rows.filter(r => patients[r.patientIndex].risk === 'High').length;
+  const followup = rows.filter(r => r.tags.includes('postdischarge')).length;
+  const uncontrolled = rows.filter(r => r.tags.includes('chronic') || r.tags.includes('hypertension')).length;
+  const preventive = rows.filter(r => r.tags.includes('preventive')).length;
+  const maternal = rows.filter(r => r.tags.includes('maternal')).length;
+  const substance = rows.filter(r => r.tags.includes('substance')).length;
+
+  document.getElementById('populationSummary').innerHTML = [
+    ['Patients in queue', rows.length, 'Filtered outreach cohort'],
+    ['High risk', high, 'Needs earlier intervention'],
+    ['Post-discharge gaps', followup, 'No closed follow-up yet'],
+    ['Chronic instability', uncontrolled, 'A1c, BP, CHF, COPD issues'],
+    ['Preventive gaps', preventive, 'Screening or immunization work'],
+    ['Maternal / substance', `${maternal} / ${substance}`, 'Targeted populations']
+  ].map(card => `
+    <div class="pop-card">
+      <div class="pop-card-label">${card[0]}</div>
+      <div class="pop-card-value">${card[1]}</div>
+      <div class="pop-card-sub">${card[2]}</div>
+    </div>
+  `).join('');
+}
+
+function renderPopulationTable(rows){
+  document.getElementById('populationCountPill').textContent = `${rows.length} patient${rows.length===1?'':'s'}`;
+  document.getElementById('populationTable').innerHTML = rows.map(row => {
+    const p = patients[row.patientIndex];
+    return `
+      <tr>
+        <td>
+          <button class="registry-row-btn" onclick="openPatientFromPopulation(${row.patientIndex})">${p.name}</button>
+          <span class="registry-sub">${p.shortMeta}</span>
+        </td>
+        <td><span class="pill ${pillClass(p.risk)}">${p.risk.toUpperCase()}</span></td>
+        <td>${row.issue}</td>
+        <td>${row.gaps.join('<br>')}</td>
+        <td>${row.a1c}</td>
+        <td>${row.ldl}</td>
+        <td>${row.bp}</td>
+        <td>${row.nextAction}</td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function renderPopulationView(){
+  renderFilterChips('cohortFilters', presetCohorts, populationConfig.mode, 'setPopulationCohort');
+  renderFilterChips('riskFilters', riskAreas, populationConfig.risk, 'setPopulationRisk');
+  renderFilterChips('focusFilters', focusAreas, populationConfig.focus, 'setPopulationFocus');
+
+  document.getElementById('quickCohorts').innerHTML = presetCohorts.map(([value,label]) => `
+    <button class="cohort-chip ${populationConfig.mode===value?'active':''}" onclick="setPopulationCohort('${value}')">${label}</button>
+  `).join('');
+
+  const rows = getPopulationRows();
+  renderPopulationSummary(rows);
+  renderPopulationTable(rows);
+}
+
 function selectPatient(i){
   selected = i;
   const p = patients[i];
@@ -1315,10 +1703,10 @@ function selectPatient(i){
   document.getElementById("taskTable").innerHTML = renderTaskRows(p.tasks);
   document.getElementById("wearableSummaryPill").textContent = "7-day trend";
   document.getElementById("wearableNarrative").textContent = p.wearableNarrative;
-  document.getElementById("chartGrid").innerHTML = renderCharts(p.wearableCharts);
+  document.getElementById("chartGrid").innerHTML = renderCharts(p.trendCharts);
   document.getElementById("handoffCount").textContent = p.tasks.length + " tasks";
   document.getElementById("snapshotText").textContent = snapshotText(p);
-  document.getElementById("snapshotWearable").textContent = "Wearable trend is " + p.trend.toLowerCase() + ". " + p.wearableNarrative;
+  document.getElementById("snapshotWearable").textContent = "Trend status is " + p.trend.toLowerCase() + ". " + p.wearableNarrative;
   renderPatientList();
 }
 function showTab(name, btn){
@@ -1343,6 +1731,7 @@ document.getElementById("closeModal").onclick = closeModal;
 document.getElementById("modal").onclick = (e) => { if(e.target.id === "modal") closeModal(); };
 document.addEventListener("keydown", (e) => { if(e.key === "Escape") closeModal(); });
 
+renderPopulationView();
 selectPatient(0);
 </script>
 </body>
