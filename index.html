@@ -425,6 +425,11 @@ h1{
   border-radius:16px;
   padding:16px;
   background:#fbfcff;
+  transition:.16s ease;
+}
+.chart-card:hover{
+  transform:translateY(-1px);
+  box-shadow:0 12px 24px rgba(15,23,42,.08);
 }
 .chart-title{
   font-size:16px;
@@ -1275,12 +1280,84 @@ const patients = [
       ["Shared","Confirm transportation plan","Rural access remains a barrier","This week","Low"]
     ],
     trendCharts:[
-      ["Blood Pressure","Last 7 days","mmHg",120,{systolic:[136,134,138,142,144,138,137],diastolic:[84,82,85,88,90,87,86],dates:["3/25","3/26","3/27","3/28","3/29","3/30","3/31"]}],
+      ["Blood Pressure","Last 7 days","mmHg",120,{systolic:[136,134,138,142,144,138,137],diastolic:[84,82,85,88,90,87,86],dates:["3/25","3/26","3/27","3/28","3/29","3/30","3/31"],primaryLabel:"Systolic",secondaryLabel:"Diastolic"}],
+      ["Mental Health (PHQ-9 / GAD-7)","Last 6 weeks","score",5,{systolic:[8,7,9,10,8,6],diastolic:[6,6,7,8,7,5],dates:["W1","W2","W3","W4","W5","W6"],primaryLabel:"PHQ-9",secondaryLabel:"GAD-7"}],
+      {type:"timeline",title:"Prenatal Visit Adherence",subtitle:"Expected visits across pregnancy + postpartum",labels:["M1","M2","M3","M4","M5","M6","M7","M8","M9","PP"],completed:[1,1,0,1,1,0,1,1,1,0]},
       ["Sleep duration","Last 7 days","hours",6.5,[5.6,5.9,5.3,5.8,5.7,6.0,5.8],["3/25","3/26","3/27","3/28","3/29","3/30","3/31"]],
       ["Daily steps","Last 7 days","steps",4200,[2500,2900,3100,3300,3600,3800,4100],["3/25","3/26","3/27","3/28","3/29","3/30","3/31"]],
       ["Resting heart rate","Last 7 days","bpm",74,[78,77,77,76,76,75,75],["3/25","3/26","3/27","3/28","3/29","3/30","3/31"]]
     ]
+  }  ,
+  {
+    name:"Daniel Brooks",
+    initials:"DB",
+    meta:"36 y/o M · Urban Phoenix · Medicaid · Behavioral health follow-up",
+    shortMeta:"36 y/o M · Urban Phoenix",
+    shortLine:"Recent PHQ-9 worsening",
+    risk:"Medium",
+    riskLabel:"MEDIUM RISK",
+    conditions:["Major depressive disorder","Generalized anxiety disorder"],
+    openGaps:3,
+    sharedTasks:3,
+    trend:"Worsening",
+    teamsAligned:2,
+    prioritySignals:3,
+    wearableNarrative:"Mood scores are worsening alongside declining sleep and activity.",
+    goals:[
+      ["Reduce PHQ-9 below 5","Behavioral health"],
+      ["Stabilize anxiety symptoms","Behavioral health"],
+      ["Re-engage in therapy","CHW"]
+    ],
+    barriers:[
+      ["Missed last therapy appointment","Behavioral health"],
+      ["Poor sleep reported","Patient reported"],
+      ["Transportation barrier for counseling visits","CHW documented"]
+    ],
+    actions:[
+      ["Reschedule therapy within 7 days","CHW"],
+      ["Review antidepressant adherence and dosing","Provider"],
+      ["Initiate weekly mood check-ins","CHW"]
+    ],
+    meds:[
+      ["Sertraline 50 mg daily","Active"],
+      ["No recent dose adjustment documented","Review needed"],
+      ["Therapy appointment missed last week","Open gap"]
+    ],
+    alerts:[
+      {tone:"bad", title:"PHQ-9 increasing over the last 4 weeks", sub:"Depression symptoms are worsening despite an active medication plan."},
+      {tone:"warn", title:"Missed therapy follow-up", sub:"Behavioral health continuity has been disrupted."},
+      {tone:"warn", title:"Sleep duration decreasing", sub:"May be worsening both mood and anxiety symptoms."}
+    ],
+    preventive:[
+      ["Depression screening","Ongoing PHQ-9 tracking active.","warn","Active"],
+      ["Substance use screening","No recent screening documented.","warn","Due"],
+      ["Influenza vaccine","Seasonal status unclear.","warn","Unknown"]
+    ],
+    chronic:[
+      ["Mental Health","PHQ-9 rising and GAD-7 elevated.","bad","Uncontrolled"],
+      ["Substance Use","Screening not recently completed.","warn","Due"],
+      ["Obesity","Reduced activity may be worsening overall health.","warn","Open gap"]
+    ],
+    preventiveSummary:"The near-term priority is maintaining engagement with behavioral health care while closing routine screening gaps during follow-up.",
+    chronicSummary:"The primary issue is worsening depression and anxiety with a missed therapy visit. Medication review and rapid re-engagement are the highest-yield next steps.",
+    timeline:[
+      ["Mar 10","fqhc","Behavioral health visit","Initial PHQ-9 score 8 and GAD-7 score 6 documented."],
+      ["Mar 17","wearable","Sleep trend","Average sleep fell below 6 hours per night."],
+      ["Mar 24","fqhc","Missed therapy visit","No-show documented in counseling workflow."],
+      ["Mar 31","wearable","Mood trend alert","PHQ-9 increased to 12 and GAD-7 to 9."]
+    ],
+    tasks:[
+      ["CHW","Reschedule therapy appointment","Missed follow-up needs rapid closure","3 days","High"],
+      ["Provider","Review antidepressant dosing","Mood symptoms worsening","This week","High"],
+      ["CHW","Complete weekly mood check-in","Sustain engagement between visits","Ongoing","Medium"]
+    ],
+    trendCharts:[
+      ["Mental Health (PHQ-9 / GAD-7)","Last 6 weeks","score",5,{systolic:[8,9,10,11,12,12],diastolic:[6,7,8,8,9,9],dates:["W1","W2","W3","W4","W5","W6"],primaryLabel:"PHQ-9",secondaryLabel:"GAD-7"}],
+      ["Sleep duration","Last 7 days","hours",7,[6.5,6.2,6.0,5.8,5.6,5.5,5.3],["3/25","3/26","3/27","3/28","3/29","3/30","3/31"]],
+      ["Daily steps","Last 7 days","steps",6000,[5800,5400,5000,4700,4300,4100,3900],["3/25","3/26","3/27","3/28","3/29","3/30","3/31"]]
+    ]
   }
+
 ];
 
 const populationConfig = {
@@ -1303,6 +1380,7 @@ const focusAreas = [
   ["hypertension","Hypertension"],
   ["maternal","Maternal"],
   ["substance","Substance use"],
+  ["mental","Mental health"],
   ["preventive","Preventive gaps"]
 ];
 
@@ -1340,8 +1418,18 @@ const populationPatients = [
     a1c:"—",
     ldl:"—",
     bp:"137/86",
-    tags:["maternal","hypertension","preventive"],
+    tags:["maternal","hypertension","preventive","mental"],
     nextAction:"Review BP uploads"
+  },
+  {
+    patientIndex:3,
+    issue:"Worsening depression and anxiety",
+    gaps:["Missed therapy visit","PHQ-9 increasing"],
+    a1c:"—",
+    ldl:"—",
+    bp:"—",
+    tags:["chronic","mental","preventive"],
+    nextAction:"Reschedule therapy"
   }
 ];
 
@@ -1470,28 +1558,64 @@ function lineChartSVG(values, baseline, color, dates=null, secondary=null){
     </svg>
   `;
 }
-function renderCharts(charts){
+function timelineChartSVG(labels, completed){
+  const w = 360, h = 120, pad = 30;
+  const step = (w - pad*2) / Math.max(1, (labels.length - 1));
+  return `
+    <svg viewBox="0 0 ${w} ${h}">
+      <line x1="${pad}" y1="${h/2}" x2="${w-pad}" y2="${h/2}" stroke="#cfd8e6" stroke-width="2"/>
+      ${labels.map((label, i) => {
+        const x = pad + i * step;
+        const done = !!completed[i];
+        return `
+          <circle cx="${x}" cy="${h/2}" r="6" fill="${done ? '#178b57' : '#fff'}" stroke="${done ? '#178b57' : '#b8341d'}" stroke-width="2"/>
+          <text x="${x}" y="${h/2 + 20}" font-size="10" text-anchor="middle" fill="#62768f">${label}</text>
+        `;
+      }).join('')}
+    </svg>
+  `;
+}
+
+function renderCharts(charts, clickable=true){
   const colors = ["#2559d6","#178b57","#6941c6","#bc7a00", "#0f766e", "#7c3aed"];
 
   return charts.map((c, i) => {
+    const cardAttrs = clickable ? ` onclick="openChartModal(${i})" style="cursor:pointer;"` : '';
+
+    if(c && typeof c === "object" && !Array.isArray(c) && c.type === "timeline") {
+      const completedCount = c.completed.filter(Boolean).length;
+      return `
+        <div class="chart-card"${cardAttrs}>
+          <div class="chart-title">${c.title}</div>
+          <div class="chart-meta">${c.subtitle}</div>
+          ${timelineChartSVG(c.labels, c.completed)}
+          <div class="legend-row">
+            <span><i class="swatch" style="background:#178b57"></i>Completed</span>
+            <span><i class="swatch" style="background:#fff;border:2px solid #b8341d"></i>Missed</span>
+            <span>${completedCount}/${c.labels.length} milestones completed</span>
+          </div>
+        </div>
+      `;
+    }
+
     const series = c[4];
     const isDualLine = series && !Array.isArray(series) && typeof series === "object" && Array.isArray(series.systolic);
 
     if(isDualLine){
       return `
-        <div class="chart-card">
+        <div class="chart-card"${cardAttrs}>
           <div class="chart-title">${c[0]}</div>
           <div class="chart-meta">${c[1]} · baseline ${c[3]} ${c[2]}</div>
           ${lineChartSVG(series.systolic, c[3], "#2559d6", series.dates || null, series.diastolic || null)}
           <div class="legend-row">
-            <span><i class="swatch" style="background:#2559d6"></i>Systolic</span>
-            <span><i class="swatch" style="background:#b8341d"></i>Diastolic</span>
+            <span><i class="swatch" style="background:#2559d6"></i>${series.primaryLabel || 'Primary'}</span>
+            <span><i class="swatch" style="background:#b8341d"></i>${series.secondaryLabel || 'Secondary'}</span>
           </div>
         </div>
       `;
     }
     return `
-      <div class="chart-card">
+      <div class="chart-card"${cardAttrs}>
         <div class="chart-title">${c[0]}</div>
         <div class="chart-meta">${c[1]} · baseline ${c[3]} ${c[2]}</div>
         ${lineChartSVG(series, c[3], colors[i % colors.length], c[5] || null)}
@@ -1499,6 +1623,7 @@ function renderCharts(charts){
     `;
   }).join("");
 }
+
 function snapshotText(p){
   const activeAlerts = p.alerts.filter(a => a.tone !== "good");
   return `${p.name}
@@ -1524,6 +1649,12 @@ function openModal(title, subtitle, bodyHtml){
   document.getElementById('modalSubtitle').textContent = subtitle || '';
   document.getElementById('modalBody').innerHTML = bodyHtml;
   document.getElementById('modal').classList.add('open');
+}
+function openChartModal(index){
+  const p = patients[selected];
+  const chart = p.trendCharts[index];
+  if(!chart) return;
+  openModal(chart[0], chart[1], `<div style="padding:8px 4px 0;">${renderCharts([chart], false)}</div>`);
 }
 function closeModal(){
   document.getElementById('modal').classList.remove('open');
