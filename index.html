@@ -720,16 +720,159 @@ h1{
 .registry-sub{display:block;color:var(--muted);font-size:12px;margin-top:4px;}
 .mini-note{font-size:12px;color:var(--muted);margin-top:8px;}
 
+
+.series-label-row{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin:-2px 0 10px;
+}
+.series-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:900;
+  background:#f7f9fc;
+  border:1px solid #dde4ef;
+  color:#314861;
+}
+.series-dot{
+  width:10px;
+  height:10px;
+  border-radius:999px;
+  display:inline-block;
+}
+.med-adherence{
+  border:1px solid #dde4ef;
+  background:#fff;
+  border-radius:14px;
+  padding:11px 12px;
+  margin-bottom:12px;
+}
+.med-adherence-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:6px;
+}
+.med-adherence-title{
+  font-size:13px;
+  font-weight:900;
+  color:#506882;
+}
+.adherence-pill{
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:900;
+}
+.adherence-pill.good{background:#e7f7ee;color:#166534}
+.adherence-pill.warn{background:#fff4db;color:#92400e}
+.adherence-pill.bad{background:#fde8e8;color:#991b1b}
+.med-adherence-sub{
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.35;
+}
+.referral-summary-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin-bottom:14px;
+}
+.referral-summary-card{
+  border:1px solid #d8e0ec;
+  border-radius:16px;
+  padding:14px;
+  background:#fbfcff;
+}
+.referral-summary-card .big{
+  font-size:24px;
+  font-weight:900;
+  line-height:1;
+  margin-bottom:6px;
+}
+.referral-area-tabs{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-bottom:14px;
+}
+.referral-tab{
+  border:1px solid #d7dfeb;
+  background:#fff;
+  color:#28425d;
+  border-radius:999px;
+  padding:8px 12px;
+  font-size:12px;
+  font-weight:800;
+  cursor:pointer;
+}
+.referral-tab.active{
+  background:#eaf0ff;
+  border-color:#9eb6f3;
+  color:#2148b7;
+}
+.referral-status-chip{
+  display:inline-block;
+  margin-top:6px;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:900;
+}
+.referral-status-chip.not-needed{background:#eef2f8;color:#506882}
+.referral-status-chip.referral-made{background:#fff4db;color:#92400e}
+.referral-status-chip.referral-completed{background:#e7f7ee;color:#166534}
+.trigger-box{
+  border:1px solid #d8e0ec;
+  border-radius:16px;
+  background:#fbfcff;
+  padding:16px;
+}
+.trigger-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+.trigger-title{
+  font-size:18px;
+  font-weight:900;
+  margin:0 0 8px;
+}
+.trigger-subtitle{
+  color:var(--muted);
+  font-size:13px;
+  margin-bottom:12px;
+}
+.trigger-label{
+  color:#5d7088;
+  font-size:12px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  margin-bottom:6px;
+}
+.trigger-text{
+  font-size:14px;
+  line-height:1.45;
+  color:#27415c;
+}
+
 @media (max-width:1400px){
   .metric-grid{grid-template-columns:repeat(2,1fr)}
-  .grid2,.detail-grid,.columns2,.chart-grid,.pop-summary-grid{grid-template-columns:1fr 1fr}
+  .grid2,.detail-grid,.columns2,.chart-grid,.pop-summary-grid,.referral-summary-grid,.trigger-grid{grid-template-columns:1fr 1fr}
 }
 @media (max-width:980px){
   .layout{grid-template-columns:1fr}
   .top{flex-direction:column}
   .sidebar,.filter-panel{position:static}
   .event{grid-template-columns:1fr}
-  .pop-layout,.pop-summary-grid{grid-template-columns:1fr}
+  .pop-layout,.pop-summary-grid,.referral-summary-grid,.trigger-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -823,6 +966,7 @@ h1{
           <button class="tab" onclick="showTab('chronic', this)">Chronic</button>
           <button class="tab" onclick="showTab('timeline', this)">Timeline</button>
           <button class="tab" onclick="showTab('snapshot', this)">Action snapshot</button>
+          <button class="tab" onclick="showTab('referrals', this)">Referrals</button>
         </div>
       </div>
 
@@ -863,7 +1007,8 @@ h1{
                 <div id="actionsList"></div>
               </div>
               <div class="block">
-                <div class="block-title">Medication and follow-up</div>
+                <div class="block-title">Medications</div>
+                <div id="medAdherence"></div>
                 <div id="medsList"></div>
               </div>
             </div>
@@ -966,6 +1111,21 @@ h1{
             <div class="detail-title">Trend quick view</div>
             <div class="content-sub" id="snapshotWearable"></div>
           </div>
+        </div>
+      </div>
+
+      <div id="view-referrals" class="view">
+        <div class="panel content-panel" style="margin-top:16px;">
+          <div class="header-row">
+            <div>
+              <div class="content-title">Referral section</div>
+              <div class="content-sub">Select a sub area to see status and trigger response.</div>
+            </div>
+            <div class="count-pill" id="referralSelectedArea">Primary care</div>
+          </div>
+          <div class="referral-summary-grid" id="referralSummary"></div>
+          <div class="referral-area-tabs" id="referralTabs"></div>
+          <div class="trigger-box" id="referralDetail"></div>
         </div>
       </div>
 
@@ -1206,6 +1366,7 @@ const patients = [
     trendCharts:[
       ["Blood Pressure","Last 7 days","mmHg",120,{systolic:[154,152,150,149,148,148,146],diastolic:[96,95,94,93,92,91,90],dates:["3/24","3/25","3/26","3/27","3/28","3/29","3/30"]}],
       ["Pulse oximetry","Last 7 days","%",95,[93,93,94,94,95,95,95],["3/24","3/25","3/26","3/27","3/28","3/29","3/30"]],
+      ["Peak Flow","Last 7 days","L/min",400,[420,410,390,370,360,350,340],["3/24","3/25","3/26","3/27","3/28","3/29","3/30"]],
       ["Resting heart rate","Last 7 days","bpm",76,[82,81,80,79,78,77,77],["3/24","3/25","3/26","3/27","3/28","3/29","3/30"]],
       ["Daily steps","Last 7 days","steps",5200,[2800,3400,3900,4300,4700,5000,5100],["3/24","3/25","3/26","3/27","3/28","3/29","3/30"]]
     ]
@@ -1359,6 +1520,180 @@ const patients = [
   }
 
 ];
+
+const referralAreas = [
+  ["primaryCare","Primary care"],
+  ["specialtyCare","Specialty care"],
+  ["mentalHealthCare","Mental health care"],
+  ["substanceUseCare","Substance use care"],
+  ["sdohCare","SDOH care"],
+  ["lifestyleCare","Lifestyle care"]
+];
+
+const careSupport = {
+  "Maria Reyes": {
+    missedMedDays: 2,
+    meds: [
+      ["Furosemide 40 mg daily","Refill not yet picked up"],
+      ["Metformin 1000 mg twice daily","Active"],
+      ["Lisinopril 20 mg daily","Active"]
+    ],
+    referrals: {
+      primaryCare:{status:"Referral made", trigger:"Recent hospital discharge with no completed primary care follow-up within 7 days.", response:"Primary care follow-up should be scheduled within 48 hours to complete medication reconciliation, review weight gain, and close preventive gaps."},
+      specialtyCare:{status:"Referral made", trigger:"Heart failure exacerbation with weight gain after discharge.", response:"Cardiology follow-up has already been requested because fluid status and diuretic response remain unstable."},
+      mentalHealthCare:{status:"Not needed", trigger:"No active depression or anxiety score currently driving a separate behavioral health referral.", response:"Continue annual screening and monitor for new symptoms during primary care follow-up."},
+      substanceUseCare:{status:"Not needed", trigger:"No current substance use diagnosis or acute trigger documented.", response:"Complete routine screening during follow-up and escalate only if screening is positive."},
+      sdohCare:{status:"Referral made", trigger:"Transportation barrier is preventing timely clinic follow-up.", response:"Community health worker outreach and transportation support were triggered to reduce missed visits."},
+      lifestyleCare:{status:"Referral completed", trigger:"Diabetes, hypertension, and heart failure all benefit from nutrition and activity support.", response:"Lifestyle counseling was completed during prior care management outreach; reinforce sodium restriction and home activity plan."}
+    }
+  },
+  "James Lee": {
+    missedMedDays: 3,
+    meds: [
+      ["Albuterol inhaler","Picked up"],
+      ["Controller inhaler","Access barrier remains"],
+      ["Amlodipine 5 mg daily","Active"]
+    ],
+    referrals: {
+      primaryCare:{status:"Referral made", trigger:"ED discharge occurred without an established follow-up relationship.", response:"Primary care referral was placed to establish continuity and close vaccine and blood pressure gaps."},
+      specialtyCare:{status:"Referral completed", trigger:"COPD exacerbation prompted pulmonary review.", response:"Specialty respiratory recommendations were returned to the outpatient team and added to the care plan."},
+      mentalHealthCare:{status:"Not needed", trigger:"No current mental health trigger has been documented.", response:"Continue routine screening during intake and future follow-up visits."},
+      substanceUseCare:{status:"Referral made", trigger:"Active tobacco use disorder remains open after ED discharge.", response:"Substance use care referral was placed for tobacco cessation support and medication counseling."},
+      sdohCare:{status:"Referral made", trigger:"Medication affordability is blocking controller inhaler use.", response:"SDOH support was triggered for pharmacy assistance and insurance navigation."},
+      lifestyleCare:{status:"Referral made", trigger:"COPD recovery and hypertension would benefit from structured coaching.", response:"Lifestyle care referral was placed for smoking reduction support, activity pacing, and blood pressure counseling."}
+    }
+  },
+  "Aaliyah Khan": {
+    missedMedDays: 1,
+    meds: [
+      ["Nifedipine ER 30 mg daily","Active"],
+      ["Prenatal vitamin continuation","Recommended postpartum"],
+      ["Home BP cuff","Sync troubleshooting still needed"]
+    ],
+    referrals: {
+      primaryCare:{status:"Referral completed", trigger:"Postpartum transition requires PCP linkage after discharge.", response:"Primary care follow-up was completed and general recovery was reviewed."},
+      specialtyCare:{status:"Referral made", trigger:"Postpartum hypertension requires obstetric follow-up and blood pressure review.", response:"OB referral remains active for postpartum blood pressure management and postpartum check completion."},
+      mentalHealthCare:{status:"Referral made", trigger:"Postpartum depression screening remains due and behavioral health follow-up is open.", response:"Mental health referral was triggered so PHQ-9, GAD-7, and postpartum mood screening can be completed promptly."},
+      substanceUseCare:{status:"Not needed", trigger:"No active substance use diagnosis has been documented in the postpartum workflow.", response:"Maintain routine screening and escalate only if screening becomes positive."},
+      sdohCare:{status:"Referral made", trigger:"Childcare and rural transportation barriers may delay follow-up.", response:"SDOH care was triggered for transportation planning and support with visit attendance."},
+      lifestyleCare:{status:"Referral made", trigger:"Postpartum recovery and hypertension benefit from nutrition and activity counseling.", response:"Lifestyle care referral was placed to support gradual activity, sleep recovery, and healthy postpartum blood pressure habits."}
+    }
+  },
+  "Daniel Brooks": {
+    missedMedDays: 2,
+    meds: [
+      ["Sertraline 50 mg daily","Active"],
+      ["Hydroxyzine PRN","Used intermittently"],
+      ["Sleep routine plan","Not consistently followed"]
+    ],
+    referrals: {
+      primaryCare:{status:"Referral made", trigger:"Behavioral health symptoms are worsening and PCP follow-up is needed for medication review.", response:"Primary care referral was placed to review adherence, side effects, and the broader care plan."},
+      specialtyCare:{status:"Not needed", trigger:"No additional specialty medical referral is currently driving care escalation.", response:"Reassess if new neurologic, endocrine, or sleep-related concerns emerge."},
+      mentalHealthCare:{status:"Referral made", trigger:"PHQ-9 and GAD-7 are both worsening with a missed therapy visit.", response:"Behavioral health referral was triggered for counseling re-engagement and closer symptom monitoring."},
+      substanceUseCare:{status:"Not needed", trigger:"No active substance use trigger is currently documented.", response:"Continue routine substance use screening during follow-up visits."},
+      sdohCare:{status:"Referral made", trigger:"Transportation barrier is contributing to missed therapy attendance.", response:"SDOH outreach was triggered to support transportation and appointment completion."},
+      lifestyleCare:{status:"Referral made", trigger:"Reduced sleep and physical activity are worsening mood symptoms.", response:"Lifestyle care referral was triggered for sleep hygiene coaching and gradual activity re-engagement."}
+    }
+  }
+};
+
+let selectedReferralArea = "primaryCare";
+
+function getSupport(p){
+  return careSupport[p.name] || {missedMedDays:0, meds:p.meds || [], referrals:{}};
+}
+
+function adherenceTone(days){
+  if(days >= 4) return "bad";
+  if(days >= 2) return "warn";
+  return "good";
+}
+
+function adherenceText(days){
+  if(days >= 4) return "Poor adherence";
+  if(days >= 2) return "Moderate risk";
+  return "Good adherence";
+}
+
+function statusClass(status){
+  return status.toLowerCase().replace(/\s+/g,'-');
+}
+
+function renderMedAdherence(days){
+  const tone = adherenceTone(days);
+  return `
+    <div class="med-adherence">
+      <div class="med-adherence-top">
+        <div class="med-adherence-title">Medication adherence</div>
+        <span class="adherence-pill ${tone}">${adherenceText(days)}</span>
+      </div>
+      <div class="med-adherence-sub">Missed medication days over the past week: <strong>${days}</strong></div>
+    </div>
+  `;
+}
+
+function renderReferralSummary(referrals){
+  const values = Object.values(referrals || {});
+  const count = status => values.filter(v => (v?.status || '') === status).length;
+  return [
+    ["Not needed", count("Not needed")],
+    ["Referral made", count("Referral made")],
+    ["Referral completed", count("Referral completed")]
+  ].map(([label,value]) => `
+    <div class="referral-summary-card">
+      <div class="big">${value}</div>
+      <div class="metric-label">${label}</div>
+    </div>
+  `).join('');
+}
+
+function renderReferralTabs(referrals){
+  return referralAreas.map(([key,label]) => {
+    const item = referrals[key] || {status:"Not needed", trigger:"No trigger documented.", response:"No response needed."};
+    return `
+      <button class="referral-tab ${selectedReferralArea===key?'active':''}" onclick="setReferralArea('${key}')">
+        ${label}
+        <span class="referral-status-chip ${statusClass(item.status)}">${item.status}</span>
+      </button>
+    `;
+  }).join('');
+}
+
+function renderReferralDetail(referrals, key){
+  const item = referrals[key] || {status:"Not needed", trigger:"No trigger documented.", response:"No response needed."};
+  const label = referralAreas.find(([k]) => k===key)?.[1] || key;
+  return `
+    <div class="trigger-title">${label}</div>
+    <div class="trigger-subtitle">Click on each sub area to review the trigger response.</div>
+    <span class="referral-status-chip ${statusClass(item.status)}">${item.status}</span>
+    <div class="trigger-grid" style="margin-top:14px;">
+      <div>
+        <div class="trigger-label">Trigger</div>
+        <div class="trigger-text">${item.trigger}</div>
+      </div>
+      <div>
+        <div class="trigger-label">Trigger response</div>
+        <div class="trigger-text">${item.response}</div>
+      </div>
+    </div>
+  `;
+}
+
+function setReferralArea(key){
+  selectedReferralArea = key;
+  renderReferralSection();
+}
+
+function renderReferralSection(){
+  const p = patients[selected];
+  const support = getSupport(p);
+  const referrals = support.referrals || {};
+  document.getElementById('referralSelectedArea').textContent = referralAreas.find(([k]) => k===selectedReferralArea)?.[1] || 'Referrals';
+  document.getElementById('referralSummary').innerHTML = renderReferralSummary(referrals);
+  document.getElementById('referralTabs').innerHTML = renderReferralTabs(referrals);
+  document.getElementById('referralDetail').innerHTML = renderReferralDetail(referrals, selectedReferralArea);
+}
+
 
 const populationConfig = {
   mode:"all",
@@ -1606,10 +1941,14 @@ function renderCharts(charts, clickable=true){
         <div class="chart-card"${cardAttrs}>
           <div class="chart-title">${c[0]}</div>
           <div class="chart-meta">${c[1]} · baseline ${c[3]} ${c[2]}</div>
+          <div class="series-label-row">
+            <span class="series-pill"><i class="series-dot" style="background:#2559d6"></i>${series.primaryLabel || (c[0].toLowerCase().includes('blood pressure') ? 'Systolic' : 'Primary')}</span>
+            <span class="series-pill"><i class="series-dot" style="background:#b8341d"></i>${series.secondaryLabel || (c[0].toLowerCase().includes('blood pressure') ? 'Diastolic' : 'Secondary')}</span>
+          </div>
           ${lineChartSVG(series.systolic, c[3], "#2559d6", series.dates || null, series.diastolic || null)}
           <div class="legend-row">
-            <span><i class="swatch" style="background:#2559d6"></i>${series.primaryLabel || 'Primary'}</span>
-            <span><i class="swatch" style="background:#b8341d"></i>${series.secondaryLabel || 'Secondary'}</span>
+            <span><i class="swatch" style="background:#2559d6"></i>${series.primaryLabel || (c[0].toLowerCase().includes('blood pressure') ? 'Systolic' : 'Primary')}</span>
+            <span><i class="swatch" style="background:#b8341d"></i>${series.secondaryLabel || (c[0].toLowerCase().includes('blood pressure') ? 'Diastolic' : 'Secondary')}</span>
           </div>
         </div>
       `;
@@ -1654,7 +1993,9 @@ function openChartModal(index){
   const p = patients[selected];
   const chart = p.trendCharts[index];
   if(!chart) return;
-  openModal(chart[0], chart[1], `<div style="padding:8px 4px 0;">${renderCharts([chart], false)}</div>`);
+  const title = Array.isArray(chart) ? chart[0] : chart.title;
+  const subtitle = Array.isArray(chart) ? chart[1] : chart.subtitle;
+  openModal(title, subtitle, `<div style="padding:8px 4px 0;">${renderCharts([chart], false)}</div>`);
 }
 function closeModal(){
   document.getElementById('modal').classList.remove('open');
@@ -1824,7 +2165,9 @@ function selectPatient(i){
   document.getElementById("goalsList").innerHTML = renderBulletItems(p.goals, "green");
   document.getElementById("barriersList").innerHTML = renderBulletItems(p.barriers, "orange");
   document.getElementById("actionsList").innerHTML = renderBulletItems(p.actions, "red");
-  document.getElementById("medsList").innerHTML = renderBulletItems(p.meds, "green");
+  const support = getSupport(p);
+  document.getElementById("medAdherence").innerHTML = renderMedAdherence(support.missedMedDays);
+  document.getElementById("medsList").innerHTML = renderBulletItems(support.meds, "green");
   document.getElementById("alertsList").innerHTML = renderAlerts(p.alerts);
   document.getElementById("preventiveList").innerHTML = renderStatusList(p.preventive);
   document.getElementById("chronicList").innerHTML = renderStatusList(p.chronic);
@@ -1838,6 +2181,7 @@ function selectPatient(i){
   document.getElementById("handoffCount").textContent = p.tasks.length + " tasks";
   document.getElementById("snapshotText").textContent = snapshotText(p);
   document.getElementById("snapshotWearable").textContent = "Trend status is " + p.trend.toLowerCase() + ". " + p.wearableNarrative;
+  renderReferralSection();
   renderPatientList();
 }
 function showTab(name, btn){
