@@ -274,6 +274,7 @@ h1{
   display:grid;
   grid-template-columns:1.1fr .9fr;
   gap:16px;
+  align-items:start;
 }
 .content-panel{
   padding:18px 18px 16px;
@@ -284,6 +285,9 @@ h1{
   align-items:flex-start;
   gap:10px;
   margin-bottom:14px;
+}
+.header-row > div:first-child{
+  min-width:0;
 }
 .content-title{
   font-size:28px;
@@ -309,12 +313,14 @@ h1{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:14px;
+  align-items:start;
 }
 .block{
   border:1px solid #d7dfeb;
   border-radius:16px;
   padding:14px;
   background:#fbfcff;
+  height:100%;
 }
 .block-title{
   font-size:15px;
@@ -369,6 +375,7 @@ h1{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:16px;
+  align-items:start;
 }
 .detail-card{
   border:1px solid #d8e0ec;
@@ -417,34 +424,40 @@ h1{
 .status.bad{background:#fde8e8; color:#991b1b}
 .chart-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
-  gap:14px;
+  grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));
+  gap:12px;
+  align-items:start;
 }
 .chart-card{
   border:1px solid #d8e0ec;
-  border-radius:16px;
-  padding:16px;
+  border-radius:14px;
+  padding:10px 10px 8px;
   background:#fbfcff;
   transition:.16s ease;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
 }
 .chart-card:hover{
   transform:translateY(-1px);
   box-shadow:0 12px 24px rgba(15,23,42,.08);
 }
 .chart-title{
-  font-size:16px;
+  font-size:15px;
   font-weight:900;
-  margin:0 0 4px;
+  margin:0 0 3px;
 }
 .chart-meta{
   color:var(--muted);
-  font-size:12px;
-  margin-bottom:10px;
+  font-size:11px;
+  margin-bottom:8px;
 }
 .chart-card svg{
   width:100%;
   height:auto;
   display:block;
+  margin-top:2px;
 }
 .legend-row{
   margin-top:10px;
@@ -863,9 +876,29 @@ h1{
   color:#27415c;
 }
 
+
+.home-referral-list{display:flex;flex-direction:column;gap:8px;}
+.home-referral-item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 10px;border:1px solid #dde4ef;border-radius:12px;background:#fff;cursor:pointer;}
+.home-referral-item:hover{background:#f8fbff;}
+.home-referral-copy{font-size:12px;line-height:1.25;}
+.home-referral-copy strong{display:block;font-size:13px;color:var(--text);margin-bottom:1px;}
+.home-referral-empty{border:1px dashed #d7dfeb;border-radius:12px;padding:10px;background:#fbfcff;color:var(--muted);font-size:12px;}
+.home-referral-panel .content-panel{padding:14px 14px 12px;}
+.home-referral-panel .header-row{margin-bottom:10px;}
+.home-referral-panel .content-title{font-size:20px;}
+.home-referral-panel .content-sub{font-size:13px;}
+.home-referral-panel .count-pill{font-size:12px;padding:6px 10px;}
+.home-referral-panel{align-self:start;}
+.home-referral-list{margin-top:2px;}
+.compact-home-grid .content-panel{height:100%;}
+.compact-home-grid{grid-template-columns:320px minmax(0,1fr);align-items:start;}
+.list-row.clickable{cursor:pointer;transition:.12s ease;}
+.list-row.clickable:hover{background:#f8fbff;border-color:#cdd9ea;}
+.trigger-box{height:100%;}
+
 @media (max-width:1400px){
   .metric-grid{grid-template-columns:repeat(2,1fr)}
-  .grid2,.detail-grid,.columns2,.chart-grid,.pop-summary-grid,.referral-summary-grid,.trigger-grid{grid-template-columns:1fr 1fr}
+  .grid2,.detail-grid,.columns2,.chart-grid,.pop-summary-grid,.referral-summary-grid,.trigger-grid,.compact-home-grid{grid-template-columns:1fr 1fr}
 }
 @media (max-width:980px){
   .layout{grid-template-columns:1fr}
@@ -874,9 +907,14 @@ h1{
   .event{grid-template-columns:1fr}
   .pop-layout,.pop-summary-grid,.referral-summary-grid,.trigger-grid{grid-template-columns:1fr}
 }
+
+html, body { height: 100%; margin: 0; }
+.app-container { min-height: 100vh; display: flex; flex-direction: column; background:#ffffff; }
+
 </style>
 </head>
 <body>
+<div class="app-container">
 <div class="wrap">
   <div class="top">
     <div>
@@ -1026,7 +1064,18 @@ h1{
           </div>
         </div>
 
-        <div class="grid2">
+        <div class="grid2 compact-home-grid">
+          <div class="panel content-panel home-referral-panel">
+            <div class="header-row">
+              <div>
+                <div class="content-title">Referral summary</div>
+                <div class="content-sub">Open referrals that have not yet been closed.</div>
+              </div>
+              <div class="count-pill" id="openReferralCount">0 open referrals</div>
+            </div>
+            <div id="homeReferralSummary"></div>
+          </div>
+
           <div class="panel content-panel">
             <div class="header-row">
               <div>
@@ -1042,7 +1091,9 @@ h1{
               <span id="wearableNarrative"></span>
             </div>
           </div>
+        </div>
 
+        <div class="grid2">
           <div class="panel content-panel">
             <div class="header-row">
               <div>
@@ -1679,6 +1730,83 @@ function renderReferralDetail(referrals, key){
   `;
 }
 
+function getOpenReferralItems(referrals){
+  return referralAreas.map(([key,label]) => ({key,label,item:referrals[key]})).filter(entry => entry.item && entry.item.status === "Referral made");
+}
+
+function renderHomeReferralSummary(referrals){
+  const openItems = getOpenReferralItems(referrals);
+  document.getElementById('openReferralCount').textContent = `${openItems.length} open referral${openItems.length===1?'':'s'}`;
+  if(!openItems.length){
+    return `<div class="home-referral-empty">No open referrals. All current referral needs are either not needed or already completed.</div>`;
+  }
+  return `<div class="home-referral-list">${openItems.map(({key,label,item}) => `
+    <div class="home-referral-item" onclick="openReferralFromHome('${key}')">
+      <div class="home-referral-copy">
+        <strong>${label}</strong>
+        ${item.response}
+      </div>
+      <span class="referral-status-chip ${statusClass(item.status)}">${item.status}</span>
+    </div>
+  `).join('')}</div>`;
+}
+
+function openReferralFromHome(key){
+  selectedReferralArea = key;
+  const referralsTab = Array.from(document.querySelectorAll('.tab')).find(btn => btn.textContent.trim() === 'Referrals');
+  if(referralsTab){
+    showTab('referrals', referralsTab);
+  } else {
+    renderReferralSection();
+  }
+}
+
+function getPreventiveHistory(item, patientName){
+  const title = item[0];
+  const status = item[3];
+  const notes = {
+    "Colorectal cancer screening": {last:"No completed screening documented", due:"Now overdue", past:"No FIT or colonoscopy result found in the tracked interval."},
+    "Breast cancer screening": {last:"Mammogram documented 26 months ago", due:"Repeat due now", past:"Prior outside imaging noted but no current interval completion logged."},
+    "Diabetic retinal exam": {last:"Last retinal exam >12 months ago", due:"Annual exam overdue", past:"No documented ophthalmology closure in the current quality year."},
+    "Influenza vaccine": {last:"Not given this season", due:"Current season due", past:"No administered flu vaccine documented in the vaccine history feed."},
+    "Pneumococcal vaccine": {last:"Status unclear", due:"Review needed", past:"Chart suggests indication is met, but completion was not closed in the registry."},
+    "COVID-19 booster": {last:"No recent booster documented", due:"Booster due", past:"No updated booster was captured in the recent immunization history."},
+    "Postpartum depression screening": {last:"No completed postpartum screen documented", due:"Immediate follow-up needed", past:"Mood screen remains open during postpartum follow-up workflow."},
+    "Cervical cancer screening": {last:"Screening interval not verified", due:"Review prior result", past:"No recent Pap/HPV result has been linked into the quality measure."},
+    "Tdap": {last:"No recent Tdap documented", due:"Due", past:"Completion not found in vaccine history."},
+    "Depression screening": {last:"Ongoing tracking active", due:"Continue monitoring", past:"Behavioral health workflow is following serial PHQ-9 results."},
+    "Substance use screening": {last:"No recent screening documented", due:"Due now", past:"Annual screening gap remains open in the registry."},
+    "HIV screening": {last:"Previously completed", due:"Not currently due", past:"Prior screening result satisfies current interval requirements."}
+  };
+  return notes[title] || {last:`No prior closure detail stored for ${title.toLowerCase()}.`, due:status, past:`Open the metric history feed to review prior completions and due dates for ${patientName}.`};
+}
+
+function openPreventiveMetric(index){
+  const p = patients[selected];
+  const item = p.preventive[index];
+  const history = getPreventiveHistory(item, p.name);
+  openModal(item[0], `${p.name} · health maintenance quality indicator`, `
+    <div class="trigger-grid">
+      <div>
+        <div class="trigger-label">Current status</div>
+        <div class="trigger-text"><span class="status ${item[2]}">${item[3]}</span></div>
+      </div>
+      <div>
+        <div class="trigger-label">Reason</div>
+        <div class="trigger-text">${item[1]}</div>
+      </div>
+      <div>
+        <div class="trigger-label">Last documented data</div>
+        <div class="trigger-text">${history.last}</div>
+      </div>
+      <div>
+        <div class="trigger-label">Past data / next due</div>
+        <div class="trigger-text">${history.past}<br><br><strong>${history.due}</strong></div>
+      </div>
+    </div>
+  `);
+}
+
 function setReferralArea(key){
   selectedReferralArea = key;
   renderReferralSection();
@@ -1807,9 +1935,9 @@ function renderAlerts(alerts){
     </div>
   `).join("");
 }
-function renderStatusList(items){
-  return items.map(item => `
-    <div class="list-row">
+function renderStatusList(items, type="standard"){
+  return items.map((item, idx) => `
+    <div class="list-row ${type === 'preventive' ? 'clickable' : ''}" ${type === 'preventive' ? `onclick="openPreventiveMetric(${idx})"` : ''}>
       <div>
         <div class="list-name">${item[0]}</div>
         <div class="list-desc">${item[1]}</div>
@@ -1842,7 +1970,7 @@ function renderTaskRows(tasks){
   `).join("");
 }
 function lineChartSVG(values, baseline, color, dates=null, secondary=null){
-  const w = 360, h = 170, pad = 35;
+  const w = 320, h = 145, pad = 30;
 
   const allVals = secondary ? values.concat(secondary) : values;
   const min = Math.min(...allVals, baseline);
@@ -1894,7 +2022,7 @@ function lineChartSVG(values, baseline, color, dates=null, secondary=null){
   `;
 }
 function timelineChartSVG(labels, completed){
-  const w = 360, h = 120, pad = 30;
+  const w = 320, h = 105, pad = 24;
   const step = (w - pad*2) / Math.max(1, (labels.length - 1));
   return `
     <svg viewBox="0 0 ${w} ${h}">
@@ -2169,7 +2297,7 @@ function selectPatient(i){
   document.getElementById("medAdherence").innerHTML = renderMedAdherence(support.missedMedDays);
   document.getElementById("medsList").innerHTML = renderBulletItems(support.meds, "green");
   document.getElementById("alertsList").innerHTML = renderAlerts(p.alerts);
-  document.getElementById("preventiveList").innerHTML = renderStatusList(p.preventive);
+  document.getElementById("preventiveList").innerHTML = renderStatusList(p.preventive, 'preventive');
   document.getElementById("chronicList").innerHTML = renderStatusList(p.chronic);
   document.getElementById("preventiveSummary").textContent = p.preventiveSummary;
   document.getElementById("chronicSummary").textContent = p.chronicSummary;
@@ -2177,6 +2305,7 @@ function selectPatient(i){
   document.getElementById("taskTable").innerHTML = renderTaskRows(p.tasks);
   document.getElementById("wearableSummaryPill").textContent = "7-day trend";
   document.getElementById("wearableNarrative").textContent = p.wearableNarrative;
+  document.getElementById('homeReferralSummary').innerHTML = renderHomeReferralSummary(getSupport(p).referrals || {});
   document.getElementById("chartGrid").innerHTML = renderCharts(p.trendCharts);
   document.getElementById("handoffCount").textContent = p.tasks.length + " tasks";
   document.getElementById("snapshotText").textContent = snapshotText(p);
@@ -2209,5 +2338,6 @@ document.addEventListener("keydown", (e) => { if(e.key === "Escape") closeModal(
 renderPopulationView();
 selectPatient(0);
 </script>
+</div>
 </body>
 </html>
