@@ -913,6 +913,51 @@ h1{
 
 
 
+
+.patient-facing-wrap{
+  display:grid;
+  grid-template-columns:300px 1fr;
+  gap:16px;
+  align-items:start;
+}
+.patient-facing-sidebar{padding:16px;position:sticky;top:12px;}
+.patient-facing-main{display:flex;flex-direction:column;gap:16px;}
+.patient-hero{padding:22px;}
+.patient-hero-title{font-size:34px;font-weight:900;line-height:1.02;margin:0 0 8px;}
+.patient-hero-sub{color:var(--muted);font-size:16px;line-height:1.45;max-width:900px;}
+.patient-pill-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;}
+.patient-big-pill{padding:8px 14px;border-radius:999px;background:#eef2f8;color:#34506e;font-size:13px;font-weight:900;}
+.patient-status-pill{background:#fff4db;color:#92400e;}
+.patient-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;}
+.patient-card-panel{padding:18px;}
+.patient-card-title{font-size:24px;font-weight:900;margin:0 0 6px;}
+.patient-card-sub{color:var(--muted);font-size:14px;line-height:1.4;margin-bottom:14px;}
+.patient-checklist,.patient-team-list,.patient-warning-list,.patient-edu-grid{display:flex;flex-direction:column;gap:10px;}
+.patient-check,.patient-team-item,.patient-warning,.patient-summary-item{border:1px solid #dde4ef;border-radius:14px;background:#fff;padding:12px 14px;}
+.patient-check{display:flex;gap:12px;align-items:flex-start;}
+.patient-check-icon{width:24px;height:24px;border-radius:50%;background:#eaf1ff;color:#2559d6;display:flex;align-items:center;justify-content:center;font-weight:900;flex:0 0 24px;margin-top:1px;}
+.patient-check-title,.patient-warning-title{font-size:16px;font-weight:900;line-height:1.25;}
+.patient-check-sub,.patient-warning-sub,.patient-team-doing,.patient-summary-sub{color:var(--muted);font-size:13px;line-height:1.4;margin-top:4px;}
+.patient-team-role{font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.05em;color:#5d7088;margin-bottom:5px;}
+.patient-warning{background:#fffaf0;border-color:#eadab1;}
+.patient-warning-title{color:#8a4b00;}
+.patient-summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.patient-summary-stat{border:1px solid #dde4ef;border-radius:14px;background:#fbfcff;padding:14px;}
+.patient-summary-label{font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.05em;color:#5d7088;margin-bottom:8px;}
+.patient-summary-value{font-size:28px;font-weight:900;line-height:1;}
+.patient-summary-sub{margin-top:6px;}
+.patient-edu-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.patient-edu-card{border:1px solid #dde4ef;border-radius:14px;background:#fbfcff;padding:12px;}
+.patient-edu-media{height:180px;border-radius:10px;margin-bottom:10px;border:1px solid #d8e0ec;background:linear-gradient(135deg,#f8fbff,#eef3fb);display:flex;align-items:center;justify-content:center;padding:18px;text-align:center;}
+.patient-edu-media-inner{max-width:360px;}
+.patient-edu-kicker{font-size:12px;font-weight:900;letter-spacing:.05em;text-transform:uppercase;color:#5d7088;margin-bottom:8px;}
+.patient-edu-button{display:inline-flex;align-items:center;justify-content:center;margin-top:12px;padding:10px 14px;border-radius:10px;background:#2d5bd1;color:#fff;text-decoration:none;font-weight:800;font-size:14px;}
+.patient-edu-title{font-size:16px;font-weight:900;margin-bottom:4px;}
+.patient-edu-copy{color:var(--muted);font-size:13px;line-height:1.35;}
+@media (max-width:980px){
+  .patient-facing-wrap,.patient-grid,.patient-summary-grid,.patient-edu-grid{grid-template-columns:1fr;}
+  .patient-facing-sidebar{position:static;}
+}
 .lifestyle-grid {
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
@@ -1120,7 +1165,8 @@ html, body { height: 100%; margin: 0; }
   </div>
 
   <div class="view-toggle">
-    <button class="mode-btn active" id="patientModeBtn" onclick="setMode('patient')">Patient View</button>
+    <button class="mode-btn active" id="patientModeBtn" onclick="setMode('patient')">Clinical View</button>
+    <button class="mode-btn" id="patientFacingModeBtn" onclick="setMode('patientFacing')">Patient View</button>
     <button class="mode-btn" id="populationModeBtn" onclick="setMode('population')">Population Health View</button>
   </div>
 
@@ -1507,6 +1553,134 @@ html, body { height: 100%; margin: 0; }
 
     </div>
   </div>
+  </div>
+
+  
+
+  <div id="patientFacingMode" class="app-mode">
+    <div class="patient-facing-wrap">
+      <div class="panel patient-facing-sidebar">
+        <div class="section-label">Patients in care coordination<br>queue</div>
+        <div id="patientFacingList"></div>
+
+        <div class="section-label" style="margin-top:20px;">What patients should see</div>
+        <div class="workflow-box">
+          <div class="workflow-item">
+            <div class="dot green"></div>
+            <div>
+              <div class="workflow-title">What you need to do</div>
+              <div class="workflow-desc">Simple next steps in everyday language.</div>
+            </div>
+          </div>
+          <div class="workflow-item">
+            <div class="dot orange"></div>
+            <div>
+              <div class="workflow-title">What your care team is doing</div>
+              <div class="workflow-desc">Shared tasks translated into patient-friendly updates.</div>
+            </div>
+          </div>
+          <div class="workflow-item">
+            <div class="dot red"></div>
+            <div>
+              <div class="workflow-title">When to ask for help</div>
+              <div class="workflow-desc">Warning signs that should trigger outreach.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="patient-facing-main">
+        <div class="panel patient-hero">
+          <div class="hero-top">
+            <div class="person">
+              <div class="avatar" id="patientFacingAvatar">MR</div>
+              <div>
+                <h2 class="patient-hero-title" id="patientFacingHeadline">Your care plan for this week</h2>
+                <div class="patient-hero-sub" id="patientFacingSubtitle">Simple next steps, care-team updates, and warning signs.</div>
+                <div class="patient-pill-row">
+                  <span class="patient-big-pill patient-status-pill" id="patientFacingStatusPill">Needs attention</span>
+                  <span class="patient-big-pill" id="patientFacingVisitPill">Visit still needed</span>
+                  <span class="patient-big-pill" id="patientFacingSupportPill">Care team helping now</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="patient-summary-grid">
+          <div class="patient-summary-stat">
+            <div class="patient-summary-label">Open items</div>
+            <div class="patient-summary-value" id="patientFacingGaps">0</div>
+            <div class="patient-summary-sub">Things still to take care of</div>
+          </div>
+          <div class="patient-summary-stat">
+            <div class="patient-summary-label">Care team members</div>
+            <div class="patient-summary-value" id="patientFacingTeamCount">0</div>
+            <div class="patient-summary-sub">People actively helping with your plan</div>
+          </div>
+          <div class="patient-summary-stat">
+            <div class="patient-summary-label">Main focus</div>
+            <div class="patient-summary-value" id="patientFacingFocus">Recovery</div>
+            <div class="patient-summary-sub">Most important thing to work on now</div>
+          </div>
+        </div>
+
+        <div class="patient-grid">
+          <div class="panel patient-card-panel">
+            <div class="patient-card-title">What you need to do</div>
+            <div class="patient-card-sub">Only the next steps that matter right now.</div>
+            <div class="patient-checklist" id="patientActionsList"></div>
+          </div>
+
+          <div class="panel patient-card-panel">
+            <div class="patient-card-title">What your care team is doing</div>
+            <div class="patient-card-sub">So the patient can see the shared plan, not just their own tasks.</div>
+            <div class="patient-team-list" id="patientTeamActions"></div>
+          </div>
+        </div>
+
+        <div class="panel patient-card-panel">
+          <div class="patient-card-title">Your care team</div>
+          <div class="patient-card-sub">People helping you with your care right now.</div>
+          <div class="care-team-grid" id="patientFacingCareTeam"></div>
+        </div>
+
+        <div class="patient-grid">
+          <div class="panel patient-card-panel">
+            <div class="patient-card-title">When to ask for help</div>
+            <div class="patient-card-sub">Warning signs to call about sooner rather than later.</div>
+            <div class="patient-warning-list" id="patientWarningsList"></div>
+          </div>
+
+          <div class="panel patient-card-panel">
+            <div class="patient-card-title">Quick summary</div>
+            <div class="patient-card-sub">Simple reminders instead of clinical labels.</div>
+            <div class="patient-checklist" id="patientSimpleSummary"></div>
+          </div>
+        </div>
+
+        <div class="panel patient-card-panel">
+          <div class="patient-card-title">Learn more</div>
+          <div class="patient-card-sub">Short videos and education for the current situation.</div>
+          <div class="patient-edu-grid" id="patientEducationGrid">
+<div class="patient-edu-card" style="border:2px solid #f5d7a1; background:#fffaf0;">
+  <div class="patient-edu-media">
+    <div class="patient-edu-media-inner">
+      <div class="patient-edu-kicker">Important in hot weather</div>
+      <div class="patient-edu-title">Heat illness prevention</div>
+      <div class="patient-edu-copy">
+        High temperatures can worsen dehydration, fatigue, and recovery.
+      </div>
+    </div>
+  </div>
+  <a href="https://www.cdc.gov/disasters/extremeheat/index.html" target="_blank" class="patient-edu-button">
+    Open CDC resource
+  </a>
+</div>
+</div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div id="populationMode" class="app-mode">
@@ -1999,6 +2173,61 @@ const careTeams = {
     {role:"Community health worker", name:"Andre Coleman", meta:"Transportation support and weekly check-ins", tag:"Community"},
     {role:"Care coordinator", name:"Melissa Ford", meta:"Behavioral health follow-up coordination", tag:"Care management"}
   ]
+};
+
+const patientFacingContent = {
+  "Maria Reyes": {
+    headline:"Maria Reyes care plan",
+    subtitle:"The main goals this week are preventing readmission, getting follow-up scheduled, and watching for fluid buildup.",
+    status:"Needs attention",
+    visit:"Follow-up still needed",
+    support:"Care team helping now",
+    focus:"Recovery",
+    actions:[["Take medications exactly as directed","Especially the water pill and diabetes medicines."],["Check your weight every morning","Call if it keeps going up or jumps suddenly."],["Complete your follow-up visit this week","Your primary care visit still needs to happen."],["Tell the team about swelling or shortness of breath","These can be early warning signs."]],
+    team:[["Primary care clinic","Scheduling a follow-up visit and reviewing medications."],["Cardiology","Following the heart failure plan after discharge."],["Community health worker","Helping with transportation and home check-ins."],["Care coordinator","Making sure the hospital and clinic are working from the same plan."]],
+    warnings:[["Weight keeps increasing","That can mean fluid is building up."],["More shortness of breath or swelling","Call your care team the same day."],["You feel confused about your medicines","Ask before skipping or changing doses."]],
+    summary:[["Biggest focus","Avoid another hospital stay by staying on the discharge plan."],["Visit status","A follow-up visit is still needed."],["Why the team is concerned","Recent weight gain and no completed follow-up yet."]],
+    education:[["Heart failure home care","Simple video on daily weights, swelling, and when to call for help.","https://www.youtube.com/results?search_query=heart+failure+home+care+patient+education"],["Heat illness prevention","Arizona heat can worsen recovery and dehydration.","https://www.youtube.com/results?search_query=heat+illness+prevention+patient+education"]]
+  },
+  "James Lee": {
+    headline:"James Lee care plan",
+    subtitle:"The main goals this week are breathing better, getting the right inhalers, and reducing another emergency visit.",
+    status:"Needs attention",
+    visit:"Visit scheduled",
+    support:"Care team helping now",
+    focus:"Breathing",
+    actions:[["Use your inhalers exactly as prescribed","Take the controller inhaler every day once you receive it."],["Go to your scheduled clinic visit","This is the main follow-up after your ED visit."],["Ask for help if medication cost is a problem","The team can help with affordability resources."],["Cut down smoking and use cessation support","This will help prevent another flare."]],
+    team:[["Primary care clinic","Completing your new patient intake and long-term plan."],["Pulmonary specialist","Helping after the recent COPD flare."],["Community health worker","Looking for inhaler cost support and tobacco cessation help."],["Care coordinator","Tracking the ED follow-up plan."]],
+    warnings:[["Breathing gets worse","Seek help right away if it becomes hard to catch your breath."],["You cannot get your inhalers","Tell the team before you run out."],["You need your rescue inhaler more often","That can mean your breathing is getting less controlled."]],
+    summary:[["Biggest focus","Avoid another emergency visit by staying on the breathing plan."],["Visit status","Clinic follow-up is already on the calendar."],["Why the team is concerned","Medication access and smoking are still active barriers."]],
+    education:[["COPD action plan","Daily steps to stay stable and know when to call.","https://www.youtube.com/embed/Rrj1K4uN6Ow"],["Heat illness prevention","Hot weather can worsen breathing problems and dehydration.","https://www.youtube.com/results?search_query=heat+illness+prevention+patient+education"]]
+  },
+  "Aaliyah Khan": {
+    headline:"Aaliyah Khan care plan",
+    subtitle:"The main goals this week are checking blood pressure, watching mood changes, and making postpartum recovery easier at home.",
+    status:"Needs attention",
+    visit:"Blood pressure review pending",
+    support:"Care team helping now",
+    focus:"Postpartum recovery",
+    actions:[["Check your blood pressure as directed","Keep logging values so the team can review them."],["Finish your postpartum mood screening","This helps the team support both mental and physical recovery."],["Ask for help with childcare or transportation barriers","The team can help remove those obstacles."],["Tell the team if headaches or vision changes start","Those can be warning signs with high blood pressure."]],
+    team:[["Primary care clinic","Following your recovery and helping with postpartum care."],["OB specialist","Reviewing postpartum hypertension follow-up."],["Community health worker","Helping with device setup, transport, and childcare barriers."],["Care coordinator","Making sure home monitoring and follow-up stay connected."]],
+    warnings:[["Headache, vision changes, or severe swelling","These can be urgent warning signs."],["Blood pressure readings stay high","Call the team rather than waiting."],["Mood feels much lower or more anxious","Tell someone early so support can be added."]],
+    summary:[["Biggest focus","Stay safe at home while blood pressure follow-up is still active."],["Visit status","Postpartum blood pressure review is still being closed."],["Why the team is concerned","Home monitoring and mood screening are still incomplete."]],
+    education:[["Postpartum blood pressure care","What to watch for after delivery and when to call.","https://www.youtube.com/embed/1w2vM0M2nq8"],["Heat illness prevention","Heat can make dehydration and recovery harder after delivery.","https://www.youtube.com/results?search_query=heat+illness+prevention+patient+education"]]
+  },
+  "Daniel Brooks": {
+    headline:"Daniel Brooks care plan",
+    subtitle:"The main goals this week are restarting therapy, improving sleep, and getting mood symptoms moving in the right direction.",
+    status:"Needs attention",
+    visit:"Therapy needs rescheduling",
+    support:"Care team helping now",
+    focus:"Mental health",
+    actions:[["Reschedule therapy this week","This is the most important next step right now."],["Take medications as prescribed","Do not stop or change the dose on your own."],["Work on sleep routine this week","Small changes in sleep can help mood and anxiety."],["Tell the team if symptoms are getting worse","Especially if you feel unsafe or unable to cope."]],
+    team:[["Primary care clinic","Reviewing medication and overall follow-up."],["Behavioral health therapist","Working to restart therapy and symptom monitoring."],["Community health worker","Helping with transportation and weekly check-ins."],["Care coordinator","Following the behavioral health plan after the missed visit."]],
+    warnings:[["Mood drops further","Tell the team early rather than waiting."],["Sleep keeps getting worse","That can worsen both mood and anxiety."],["You feel unsafe","Get urgent help right away."]],
+    summary:[["Biggest focus","Reconnect to therapy and stabilize mood."],["Visit status","The missed therapy visit still needs to be closed."],["Why the team is concerned","Mood scores are rising and sleep is getting worse."]],
+    education:[["Depression self-management","Simple tools that support treatment between visits.","https://www.youtube.com/embed/z-IR48Mb3W0"],["Heat illness prevention","Heat can worsen fatigue, dehydration, and medication side effects.","https://www.youtube.com/results?search_query=heat+illness+prevention+patient+education"]]
+  }
 };
 
 let selectedReferralArea = "primaryCare";
@@ -2646,12 +2875,89 @@ function exportSummary(){
   URL.revokeObjectURL(url);
   showToast("Summary exported");
 }
+function renderPatientFacingList(){
+  const host = document.getElementById("patientFacingList");
+  if(!host) return;
+  host.innerHTML = patients.map((p, i) => `
+    <div class="patient-card ${i===selected?'active':''}" onclick="selectPatient(${i})">
+      <div class="patient-name">${p.name}</div>
+      <div class="patient-meta">${p.shortMeta}<br>${p.shortLine}</div>
+      <div class="tag-row">
+        <span class="pill ${pillClass(p.risk)}">${formatRiskLabel(p.risk)}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderPatientFacingView(){
+  const p = patients[selected];
+  const content = patientFacingContent[p.name];
+  const team = careTeams[p.name] || [];
+  if(!content) return;
+  document.getElementById('patientFacingAvatar').textContent = p.initials;
+  document.getElementById('patientFacingHeadline').textContent = content.headline;
+  document.getElementById('patientFacingSubtitle').textContent = content.subtitle;
+  document.getElementById('patientFacingStatusPill').textContent = content.status;
+  document.getElementById('patientFacingVisitPill').textContent = content.visit;
+  document.getElementById('patientFacingSupportPill').textContent = content.support;
+  document.getElementById('patientFacingGaps').textContent = p.openGaps;
+  document.getElementById('patientFacingTeamCount').textContent = team.length;
+  document.getElementById('patientFacingFocus').textContent = content.focus;
+  document.getElementById('patientActionsList').innerHTML = content.actions.map(item => `
+    <div class="patient-check">
+      <div class="patient-check-icon">✓</div>
+      <div>
+        <div class="patient-check-title">${item[0]}</div>
+        <div class="patient-check-sub">${item[1]}</div>
+      </div>
+    </div>`).join('');
+  document.getElementById('patientTeamActions').innerHTML = content.team.map(item => `
+    <div class="patient-team-item">
+      <div class="patient-team-role">${item[0]}</div>
+      <div class="patient-team-doing">${item[1]}</div>
+    </div>`).join('');
+  document.getElementById('patientFacingCareTeam').innerHTML = team.map(member => `
+    <div class="care-team-card">
+      <div class="care-team-role">${member.role}</div>
+      <div class="care-team-name">${member.name}</div>
+      <div class="care-team-meta">${member.meta}</div>
+      <span class="care-team-pill">${member.tag}</span>
+    </div>`).join('');
+  document.getElementById('patientWarningsList').innerHTML = content.warnings.map(item => `
+    <div class="patient-warning">
+      <div class="patient-warning-title">${item[0]}</div>
+      <div class="patient-warning-sub">${item[1]}</div>
+    </div>`).join('');
+  document.getElementById('patientSimpleSummary').innerHTML = content.summary.map(item => `
+    <div class="patient-summary-item">
+      <div class="patient-check-title">${item[0]}</div>
+      <div class="patient-summary-sub">${item[1]}</div>
+    </div>`).join('');
+  document.getElementById('patientEducationGrid').innerHTML = content.education.map(item => `
+    <div class="patient-edu-card">
+      <div class="patient-edu-media">
+        <div class="patient-edu-media-inner">
+          <div class="patient-edu-kicker">Patient education</div>
+          <div class="patient-edu-title">${item[0]}</div>
+          <div class="patient-edu-copy">${item[1]}</div>
+          <a class="patient-edu-button" href="${item[2]}" target="_blank" rel="noopener noreferrer">Watch video</a>
+        </div>
+      </div>
+      <div class="patient-edu-title">${item[0]}</div>
+      <div class="patient-edu-copy">${item[1]}</div>
+    </div>`).join('');
+  renderPatientFacingList();
+}
+
 function setMode(mode){
   appMode = mode;
   document.getElementById("patientMode").classList.toggle("active", mode === "patient");
+  document.getElementById("patientFacingMode").classList.toggle("active", mode === "patientFacing");
   document.getElementById("populationMode").classList.toggle("active", mode === "population");
   document.getElementById("patientModeBtn").classList.toggle("active", mode === "patient");
+  document.getElementById("patientFacingModeBtn").classList.toggle("active", mode === "patientFacing");
   document.getElementById("populationModeBtn").classList.toggle("active", mode === "population");
+  if(mode === "patientFacing") renderPatientFacingView();
 }
 
 function renderFilterChips(hostId, items, selectedValue, clickHandler){
@@ -2791,6 +3097,7 @@ function selectPatient(i){
   renderTopProblems(p);
   renderCareTeam(p);
   renderPatientList();
+  renderPatientFacingView();
 }
 function showTab(name, btn){
   document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
