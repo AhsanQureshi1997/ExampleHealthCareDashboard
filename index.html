@@ -2027,6 +2027,12 @@ function renderTopProblems(patient){
       ["Postpartum HTN","BP still elevated","Action needed"],
       ["Mental health","Screening incomplete","Follow-up"]
     ];
+  } else if(patient.name === "Daniel Brooks"){
+    probs = [
+      ["Depression worsening","PHQ-9 trend rising","Action needed"],
+      ["Missed therapy","Continuity gap","Action needed"],
+      ["Sleep decline","Less than goal","Follow-up"]
+    ];
   }
 
   el.innerHTML = probs.map((p,i)=>`
@@ -2782,6 +2788,8 @@ function selectPatient(i){
   renderReferralSection();
   renderEducationLibrary(p);
   loadDummyLifestyleData(p);
+  renderTopProblems(p);
+  renderCareTeam(p);
   renderPatientList();
 }
 function showTab(name, btn){
