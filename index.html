@@ -43,7 +43,7 @@ body{
 }
 h1{
   margin:0;
-  font-size:40px;
+  font-size:34px;
   line-height:1.02;
   font-weight:800;
   letter-spacing:-1px;
@@ -85,7 +85,7 @@ h1{
 .panel{
   background:var(--panel);
   border:1px solid var(--border);
-  border-radius:22px;
+  border-radius:18px;
   box-shadow:var(--shadow);
 }
 .sidebar{
@@ -180,7 +180,7 @@ h1{
   line-height:1.35;
 }
 .hero{
-  padding:18px 20px 18px;
+  padding:16px 18px;
 }
 .hero-top{
   display:flex;
@@ -206,8 +206,8 @@ h1{
   font-weight:800;
 }
 .hero-name{
-  font-size:34px;
-  line-height:1;
+  font-size:30px;
+  line-height:1.02;
   font-weight:800;
   margin:0 0 7px;
   letter-spacing:-.8px;
@@ -234,7 +234,7 @@ h1{
 .metric{
   border:1px solid #d5ddec;
   border-radius:18px;
-  padding:14px 16px 12px;
+  padding:12px 14px 10px;
   background:#fbfcff;
 }
 .metric-label{
@@ -244,7 +244,7 @@ h1{
   margin-bottom:8px;
 }
 .metric-value{
-  font-size:28px;
+  font-size:22px;
   font-weight:900;
   line-height:1;
 }
@@ -277,7 +277,7 @@ h1{
   align-items:start;
 }
 .content-panel{
-  padding:18px 18px 16px;
+  padding:16px;
 }
 .header-row{
   display:flex;
@@ -290,7 +290,7 @@ h1{
   min-width:0;
 }
 .content-title{
-  font-size:28px;
+  font-size:22px;
   font-weight:900;
   line-height:1.05;
   margin:0 0 6px;
@@ -301,11 +301,11 @@ h1{
   line-height:1.4;
 }
 .count-pill{
-  padding:7px 12px;
+  padding:6px 10px;
   border-radius:999px;
-  background:#eef2f8;
+  background:#f2f5f9;
   color:#34506e;
-  font-size:13px;
+  font-size:12px;
   font-weight:900;
   white-space:nowrap;
 }
@@ -662,7 +662,7 @@ h1{
 }
 .filter-group{margin-bottom:18px;}
 .filter-title{
-  font-size:13px;
+  font-size:12px;
   font-weight:900;
   color:#5d7088;
   text-transform:uppercase;
@@ -690,7 +690,7 @@ h1{
 .pop-card{
   border:1px solid #d5ddec;
   border-radius:18px;
-  padding:14px 16px 12px;
+  padding:12px 14px 10px;
   background:#fbfcff;
 }
 .pop-card-label{font-size:13px;font-weight:800;color:#506882;margin-bottom:8px;}
@@ -773,7 +773,7 @@ h1{
   margin-bottom:6px;
 }
 .med-adherence-title{
-  font-size:13px;
+  font-size:12px;
   font-weight:900;
   color:#506882;
 }
@@ -908,6 +908,194 @@ h1{
   .pop-layout,.pop-summary-grid,.referral-summary-grid,.trigger-grid{grid-template-columns:1fr}
 }
 
+
+
+.lifestyle-grid {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px;
+}
+.lifestyle-stat{
+  border:1px solid #d8e0ec;
+  border-radius:16px;
+  padding:14px;
+  background:#fbfcff;
+}
+.lifestyle-label{
+  font-size:13px;
+  font-weight:800;
+  color:#506882;
+  margin-bottom:10px;
+}
+.lifestyle-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+}
+
+.lifestyle-input{
+  min-width:90px;
+  padding:8px 12px;
+  border:1px solid #d7dfeb;
+  border-radius:10px;
+  background:#f7f9fc;
+  color:#142844;
+  font-size:18px;
+  font-weight:800;
+  line-height:1;
+  display:inline-flex;
+  align-items:center;
+  justify-content:flex-start;
+}
+
+.lifestyle-status{
+  font-size:12px;
+  font-weight:900;
+  padding:6px 10px;
+  border-radius:999px;
+  white-space:nowrap;
+}
+.lifestyle-status.below{background:#eef2f7;color:#5d7088;}
+.lifestyle-status.meeting{background:#e7f7ee;color:#166534;}
+.lifestyle-status.above{background:#eaf0ff;color:#2148b7;}
+.edu-section h3 {
+  cursor:pointer;
+  margin-top:10px;
+  margin-bottom:0;
+  font-size:17px;
+}
+.edu-content {
+  display:none;
+  margin-top:12px;
+}
+.edu-content iframe {
+  width:100%;
+  height:180px;
+  border-radius:8px;
+  margin-bottom:14px;
+  border:none;
+}
+.video-topic{
+  font-size:13px;
+  font-weight:800;
+  color:#506882;
+  margin-bottom:6px;
+}
+.edu-helper{
+  color:var(--muted);
+  font-size:13px;
+  margin-bottom:12px;
+}
+.video-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px;
+}
+.video-card{
+  border:1px solid #d8e0ec;
+  border-radius:14px;
+  padding:12px;
+  background:#fbfcff;
+}
+.video-card iframe{
+  margin-bottom:0;
+}
+.video-reason{
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.35;
+  margin-bottom:8px;
+}
+@media (max-width:980px){
+  .video-grid{grid-template-columns:1fr;}
+}
+
+
+.care-team-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.care-team-card{
+  border:1px solid #dde4ef;
+  border-radius:14px;
+  padding:12px;
+  background:#fff;
+}
+.care-team-role{
+  font-size:12px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  color:#5d7088;
+  margin-bottom:6px;
+}
+.care-team-name{
+  font-size:16px;
+  font-weight:900;
+  color:#142844;
+  margin-bottom:4px;
+}
+.care-team-meta{
+  color:#62768f;
+  font-size:13px;
+  line-height:1.35;
+}
+.care-team-pill{
+  display:inline-block;
+  margin-top:8px;
+  padding:5px 9px;
+  border-radius:999px;
+  background:#eef2f8;
+  color:#34506e;
+  font-size:11px;
+  font-weight:900;
+}
+@media (max-width:980px){
+  .care-team-grid{grid-template-columns:1fr;}
+}
+
+
+
+.compact-home-grid{
+  margin-top:16px;
+}
+
+#view-home .grid2{
+  margin-top:16px;
+}
+
+#topProblemsList .list-row{
+  padding:10px 12px;
+  border-radius:12px;
+}
+
+#topProblemsList .list-name{
+  font-size:15px;
+}
+
+#topProblemsList .list-desc{
+  font-size:12px;
+}
+
+.block-title{
+  font-size:14px;
+}
+
+.hero .tag-row .pill{
+  padding:6px 10px;
+  font-size:10px;
+}
+
+.chart-card{
+  border-radius:12px;
+}
+
+.task-table th,.task-table td{
+  padding:10px 8px;
+}
+
 html, body { height: 100%; margin: 0; }
 .app-container { min-height: 100vh; display: flex; flex-direction: column; background:#ffffff; }
 
@@ -1005,6 +1193,7 @@ html, body { height: 100%; margin: 0; }
           <button class="tab" onclick="showTab('timeline', this)">Timeline</button>
           <button class="tab" onclick="showTab('snapshot', this)">Action snapshot</button>
           <button class="tab" onclick="showTab('referrals', this)">Referrals</button>
+          <button class="tab" onclick="showTab('education', this)">Lifestyle & education</button>
         </div>
       </div>
 
@@ -1020,6 +1209,27 @@ html, body { height: 100%; margin: 0; }
           <div class="content-sub">
             Core functions shown here include patient-level risk stratification, shared task visibility, preventive care review, chronic disease quality monitoring, cross-system timeline visibility, and wearables-informed outreach prioritization.
           </div>
+        </div>
+
+        <div class="panel content-panel" style="margin-top:16px;">
+          <div class="header-row">
+            <div>
+              <div class="content-title">Care Team</div>
+              <div class="content-sub">Providers and support staff involved in the shared care plan.</div>
+            </div>
+            <div class="count-pill" id="careTeamCount">4 team members</div>
+          </div>
+          <div class="care-team-grid" id="careTeamGrid"></div>
+        </div>
+
+        <div class="panel content-panel" style="margin-top:16px;">
+          <div class="header-row">
+            <div>
+              <div class="content-title">Top problems</div>
+              <div class="content-sub">Highest priority issues to address first.</div>
+            </div>
+          </div>
+          <div class="list" id="topProblemsList"></div>
         </div>
 
         <div class="grid2">
@@ -1063,8 +1273,7 @@ html, body { height: 100%; margin: 0; }
             <div id="alertsList"></div>
           </div>
         </div>
-
-        <div class="grid2 compact-home-grid">
+<div class="grid2 compact-home-grid">
           <div class="panel content-panel home-referral-panel">
             <div class="header-row">
               <div>
@@ -1178,6 +1387,117 @@ html, body { height: 100%; margin: 0; }
           <div class="referral-area-tabs" id="referralTabs"></div>
           <div class="trigger-box" id="referralDetail"></div>
         </div>
+
+      </div>
+
+      <div id="view-education" class="view">
+        <div class="panel content-panel" style="margin-top:16px;">
+          <div class="header-row">
+            <div>
+              <div class="content-title">Lifestyle Summary</div>
+              <div class="content-sub">Patient-reported activity and behaviors over the past 7 days.</div>
+            </div>
+            <div class="count-pill">Weekly inputs</div>
+          </div>
+
+          
+<div class="lifestyle-grid">
+  <div class="lifestyle-stat">
+    <div class="lifestyle-label">Fruits &amp; Vegetables (servings)</div>
+    <div class="lifestyle-row">
+      <div class="lifestyle-input" id="fv"></div>
+      <span id="fvStatus" class="lifestyle-status"></span>
+    </div>
+  </div>
+
+  <div class="lifestyle-stat">
+    <div class="lifestyle-label">Home Cooked Meals</div>
+    <div class="lifestyle-row">
+      <div class="lifestyle-input" id="home"></div>
+      <span id="homeStatus" class="lifestyle-status"></span>
+    </div>
+  </div>
+
+  <div class="lifestyle-stat">
+    <div class="lifestyle-label">Sugary Drinks</div>
+    <div class="lifestyle-row">
+      <div class="lifestyle-input" id="sugar"></div>
+      <span id="sugarStatus" class="lifestyle-status"></span>
+    </div>
+  </div>
+
+  <div class="lifestyle-stat">
+    <div class="lifestyle-label">Fast/Processed Food Servings</div>
+    <div class="lifestyle-row">
+      <div class="lifestyle-input" id="fast"></div>
+      <span id="fastStatus" class="lifestyle-status"></span>
+    </div>
+  </div>
+
+  <div class="lifestyle-stat">
+    <div class="lifestyle-label">Cardio Minutes</div>
+    <div class="lifestyle-row">
+      <div class="lifestyle-input" id="cardio"></div>
+      <span id="cardioStatus" class="lifestyle-status"></span>
+    </div>
+  </div>
+
+  <div class="lifestyle-stat">
+    <div class="lifestyle-label">Strength Training Minutes</div>
+    <div class="lifestyle-row">
+      <div class="lifestyle-input" id="strength"></div>
+      <span id="strengthStatus" class="lifestyle-status"></span>
+    </div>
+  </div>
+
+  <div class="lifestyle-stat">
+    <div class="lifestyle-label">Brain Games Minutes</div>
+    <div class="lifestyle-row">
+      <div class="lifestyle-input" id="brain"></div>
+      <span id="brainStatus" class="lifestyle-status"></span>
+    </div>
+  </div>
+
+  <div class="lifestyle-stat">
+    <div class="lifestyle-label">Stress Reduction Minutes</div>
+    <div class="lifestyle-row">
+      <div class="lifestyle-input" id="stress"></div>
+      <span id="stressStatus" class="lifestyle-status"></span>
+    </div>
+  </div>
+</div>
+
+<div id="lifestyleSummaryText" class="content-sub" style="margin-top:12px;"></div>
+
+        </div>
+
+        <div class="panel content-panel" style="margin-top:16px;">
+          <div class="header-row">
+            <div>
+              <div class="content-title">Educational Library</div>
+              <div class="content-sub">Patient-facing education across healthy lifestyle and chronic disease self management.</div>
+            </div>
+            <div class="count-pill">Curated resources</div>
+          </div>
+
+          <div class="edu-section">
+            <h3 onclick="toggleEdu('lifestyleEdu')">Healthy Lifestyle</h3>
+            <div id="lifestyleEdu" class="edu-content" style="display:block;">
+              <div class="edu-helper">These official resources change based on the selected patient\'s risks and current problems.</div>
+              <div id="lifestyleEduList" class="video-grid"></div>
+            </div>
+          </div>
+
+          <div class="edu-section">
+            <h3 onclick="toggleEdu('chronicEdu')">Chronic Disease Self Management</h3>
+            <div id="chronicEdu" class="edu-content" style="display:block;">
+              <div class="edu-helper">Condition-specific resources are filtered to the problems this patient actually has.</div>
+              <div id="chronicEduList" class="video-grid"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       </div>
 
     </div>
@@ -1648,7 +1968,90 @@ const careSupport = {
   }
 };
 
+
+const careTeams = {
+  "Maria Reyes": [
+    {role:"Primary care physician", name:"Dr. Elena Smith", meta:"FQHC medical home · leads outpatient follow-up", tag:"PCP"},
+    {role:"Cardiologist", name:"Dr. Ravi Patel", meta:"Banner cardiology · heart failure management", tag:"Specialty"},
+    {role:"Community health worker", name:"Maria Lopez", meta:"Transportation, home check-ins, education reinforcement", tag:"Community"},
+    {role:"Care coordinator", name:"Jasmine Brooks, RN", meta:"Hospital transition-of-care team", tag:"Hospital"}
+  ],
+  "James Lee": [
+    {role:"Primary care physician", name:"Dr. Aaron Kim", meta:"FQHC intake and longitudinal care", tag:"PCP"},
+    {role:"Pulmonary specialist", name:"Dr. Leila Hassan", meta:"Consulted after COPD exacerbation", tag:"Specialty"},
+    {role:"Community health worker", name:"Terrence Hall", meta:"Medication access and tobacco cessation outreach", tag:"Community"},
+    {role:"Care coordinator", name:"Natalie Green", meta:"ED follow-up and referral tracking", tag:"Hospital"}
+  ],
+  "Aaliyah Khan": [
+    {role:"Primary care physician", name:"Dr. Priya Desai", meta:"Primary care follow-up after postpartum discharge", tag:"PCP"},
+    {role:"OB specialist", name:"Dr. Monica Alvarez", meta:"Postpartum hypertension follow-up", tag:"Specialty"},
+    {role:"Community health worker", name:"Sara Gutierrez", meta:"Device setup, transportation, childcare barriers", tag:"Community"},
+    {role:"Care coordinator", name:"Tiffany Reed, RN", meta:"Postpartum transition support", tag:"Hospital"}
+  ],
+  "Daniel Brooks": [
+    {role:"Primary care physician", name:"Dr. Kevin Moore", meta:"Medication review and overall medical coordination", tag:"PCP"},
+    {role:"Behavioral health therapist", name:"Dr. Laila Nguyen", meta:"Therapy continuity and symptom monitoring", tag:"Behavioral health"},
+    {role:"Community health worker", name:"Andre Coleman", meta:"Transportation support and weekly check-ins", tag:"Community"},
+    {role:"Care coordinator", name:"Melissa Ford", meta:"Behavioral health follow-up coordination", tag:"Care management"}
+  ]
+};
+
 let selectedReferralArea = "primaryCare";
+
+
+
+function renderTopProblems(patient){
+  const el = document.getElementById("topProblemsList");
+  if(!el) return;
+
+  let probs = [];
+
+  if(patient.name === "Maria Reyes"){
+    probs = [
+      ["CHF worsening","Weight gain + symptoms","Action needed"],
+      ["Missed follow-up","No PCP visit post discharge","Action needed"],
+      ["Diabetes control","A1c elevated","Follow-up"]
+    ];
+  } else if(patient.name === "James Lee"){
+    probs = [
+      ["COPD risk","Recent exacerbation","Action needed"],
+      ["Smoking","Active tobacco use","Follow-up"]
+    ];
+  } else if(patient.name === "Aaliyah Khan"){
+    probs = [
+      ["Postpartum HTN","BP still elevated","Action needed"],
+      ["Mental health","Screening incomplete","Follow-up"]
+    ];
+  }
+
+  el.innerHTML = probs.map((p,i)=>`
+    <div class="list-row">
+      <div>
+        <div class="list-name">${i+1}. ${p[0]}</div>
+        <div class="list-desc">${p[1]}</div>
+      </div>
+      <span class="status ${p[2]=="Action needed"?"bad":"warn"}">${p[2]}</span>
+    </div>
+  `).join("");
+}
+
+function renderCareTeam(patient){
+  const grid = document.getElementById('careTeamGrid');
+  const count = document.getElementById('careTeamCount');
+  if(!grid || !patient) return;
+  const team = careTeams[patient.name] || [];
+  if(count){
+    count.textContent = `${team.length} team member${team.length===1?'':'s'}`;
+  }
+  grid.innerHTML = team.map(member => `
+    <div class="care-team-card">
+      <div class="care-team-role">${member.role}</div>
+      <div class="care-team-name">${member.name}</div>
+      <div class="care-team-meta">${member.meta}</div>
+      <span class="care-team-pill">${member.tag}</span>
+    </div>
+  `).join('');
+}
 
 function getSupport(p){
   return careSupport[p.name] || {missedMedDays:0, meds:p.meds || [], referrals:{}};
@@ -2311,6 +2714,8 @@ function selectPatient(i){
   document.getElementById("snapshotText").textContent = snapshotText(p);
   document.getElementById("snapshotWearable").textContent = "Trend status is " + p.trend.toLowerCase() + ". " + p.wearableNarrative;
   renderReferralSection();
+  renderEducationLibrary(p);
+  loadDummyLifestyleData(p);
   renderPatientList();
 }
 function showTab(name, btn){
@@ -2336,7 +2741,311 @@ document.getElementById("modal").onclick = (e) => { if(e.target.id === "modal") 
 document.addEventListener("keydown", (e) => { if(e.key === "Escape") closeModal(); });
 
 renderPopulationView();
+
+const patientLifestyleData = {
+  "Maria Reyes": {fv:14, home:6, sugar:6, fast:5, cardio:45, strength:20, brain:25, stress:30},
+  "James Lee": {fv:11, home:5, sugar:4, fast:6, cardio:60, strength:15, brain:20, stress:25},
+  "Aaliyah Khan": {fv:16, home:8, sugar:3, fast:3, cardio:70, strength:25, brain:30, stress:55},
+  "Daniel Brooks": {fv:12, home:7, sugar:2, fast:4, cardio:80, strength:30, brain:60, stress:75}
+};
+
+
+const educationCatalog = {
+  lifestyle: {
+    intro: {
+      topic:"Healthy Lifestyle Intro",
+      source:"NHLBI / NIH",
+      url:"https://www.nhlbi.nih.gov/health/heart-healthy-living",
+      icon:"🫀",
+      reason:"General heart-healthy living basics for patients starting behavior change."
+    },
+    nutrition: {
+      topic:"Nutrition",
+      source:"NHLBI / NIH",
+      url:"https://www.nhlbi.nih.gov/health/dash-eating-plan",
+      icon:"🥗",
+      reason:"Useful for blood pressure, diabetes, heart failure, and weight-related risk."
+    },
+    education: {
+      topic:"Education",
+      source:"CDC",
+      url:"https://www.cdc.gov/diabetes/living-with/index.html",
+      icon:"📘",
+      reason:"Simple self-management teaching for daily routines, checkups, and symptom monitoring."
+    },
+    exercise: {
+      topic:"Exercise",
+      source:"Move Your Way / HHS",
+      url:"https://odphp.health.gov/moveyourway",
+      icon:"🏃",
+      reason:"Practical activity guidance that supports weekly cardio and strength goals."
+    },
+    stress: {
+      topic:"Stress Reduction",
+      source:"MedlinePlus / NIH",
+      url:"https://medlineplus.gov/ency/patientinstructions/000874.htm",
+      icon:"🧘",
+      reason:"Helpful when stress may worsen blood pressure, symptoms, or adherence."
+    },
+    brain: {
+      topic:"Brain Games",
+      source:"NIA / NIH",
+      url:"https://www.nia.nih.gov/health/brain-health/cognitive-health-and-older-adults",
+      icon:"🧠",
+      reason:"Supports cognitive health and gives a brain-health resource instead of a generic game embed."
+    },
+    toxins: {
+      topic:"Avoiding Environmental Toxins",
+      source:"ATSDR / CDC",
+      url:"https://www.atsdr.cdc.gov/index.html",
+      icon:"🌿",
+      reason:"Useful when lung disease, smoking, or environmental exposure risk is part of the picture."
+    }
+  },
+  chronic: {
+    obesity: {
+      topic:"Obesity",
+      source:"MedlinePlus / NIH",
+      url:"https://medlineplus.gov/obesity.html",
+      icon:"⚖️",
+      reason:"Relevant when weight is worsening overall disease control."
+    },
+    mental: {
+      topic:"Mental and Emotional Health",
+      source:"NIMH / NIH",
+      url:"https://www.nimh.nih.gov/health/topics/caring-for-your-mental-health",
+      icon:"💙",
+      reason:"Useful when mood, anxiety, or postpartum mental health needs are active."
+    },
+    diabetes: {
+      topic:"Diabetes",
+      source:"CDC",
+      url:"https://www.cdc.gov/diabetes/diabetes-tv/diabetes-kickstart.html",
+      icon:"🩸",
+      reason:"Prioritized because glycemic control is an active issue."
+    },
+    htn: {
+      topic:"Hypertension",
+      source:"NHLBI / NIH",
+      url:"https://www.nhlbi.nih.gov/education/high-blood-pressure",
+      icon:"🩺",
+      reason:"Prioritized because blood pressure is above goal or requires monitoring."
+    },
+    chf: {
+      topic:"CHF",
+      source:"NHLBI / NIH",
+      url:"https://www.nhlbi.nih.gov/health/heart-failure/living-with",
+      icon:"❤️",
+      reason:"Helpful when fluid status, symptoms, and daily weight matter."
+    },
+    pulmonary: {
+      topic:"Pulmonary Disease",
+      source:"NHLBI / NIH",
+      url:"https://www.nhlbi.nih.gov/health/copd/living-with",
+      icon:"🫁",
+      reason:"Relevant for COPD, asthma, or breathing-related recovery."
+    },
+    meds: {
+      topic:"Medication Adherence",
+      source:"MedlinePlus / NIH",
+      url:"https://medlineplus.gov/ency/patientinstructions/000883.htm",
+      icon:"💊",
+      reason:"Included when the patient has refill, pickup, or adherence barriers."
+    },
+    sdoh: {
+      topic:"Social Determinants of Health",
+      source:"CDC",
+      url:"https://www.cdc.gov/about/priorities/why-is-addressing-sdoh-important.html",
+      icon:"🚗",
+      reason:"Useful when transportation, affordability, childcare, or other access barriers are present."
+    }
+  }
+};
+
+
+function renderVideoCard(item){
+  return `
+    <a class="video-link" href="${item.url}" target="_blank" rel="noopener noreferrer">
+      <div class="video-card">
+        <div class="video-thumb" aria-hidden="true">${item.icon}</div>
+        <div class="video-card-title">${item.topic}</div>
+      </div>
+    </a>
+  `;
+}
+
+
+function dedupeVideos(items){
+  const seen = new Set();
+  return items.filter(item => {
+    const key = item.topic;
+    if(seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function getPatientEducation(p){
+  const lifestyle = [educationCatalog.lifestyle.intro, educationCatalog.lifestyle.nutrition, educationCatalog.lifestyle.exercise];
+  const chronic = [];
+  const conditionText = (p.conditions || []).join(' | ').toLowerCase();
+  const barrierText = (p.barriers || []).flat().join(' | ').toLowerCase();
+  const medText = (getSupport(p).meds || []).flat().join(' | ').toLowerCase();
+  const chronicNames = (p.chronic || []).map(row => `${row[0]} ${row[3]}`.toLowerCase()).join(' | ');
+
+  if(/diabetes/.test(conditionText) || /diabetes/.test(chronicNames)) {
+    chronic.push(educationCatalog.chronic.diabetes, educationCatalog.chronic.meds);
+    lifestyle.push(educationCatalog.lifestyle.nutrition);
+  }
+  if(/hypertension/.test(conditionText) || /hypertension/.test(chronicNames)) {
+    chronic.push(educationCatalog.chronic.htn);
+    lifestyle.push(educationCatalog.lifestyle.stress);
+  }
+  if(/heart failure|chf/.test(conditionText) || /chf/.test(chronicNames)) {
+    chronic.push(educationCatalog.chronic.chf, educationCatalog.chronic.meds);
+    lifestyle.push(educationCatalog.lifestyle.exercise);
+  }
+  if(/copd|asthma|pulmonary/.test(conditionText) || /copd|asthma/.test(chronicNames)) {
+    chronic.push(educationCatalog.chronic.pulmonary);
+    lifestyle.push(educationCatalog.lifestyle.toxins);
+  }
+  if(/depress|anxiety|behavioral health|mental/.test(conditionText) || /mental health/.test(chronicNames)) {
+    chronic.push(educationCatalog.chronic.mental);
+    lifestyle.push(educationCatalog.lifestyle.stress, educationCatalog.lifestyle.brain);
+  }
+  if(/postpartum/.test(conditionText)) {
+    chronic.push(educationCatalog.chronic.mental, educationCatalog.chronic.htn);
+    lifestyle.push(educationCatalog.lifestyle.stress);
+  }
+  if(/obesity/.test(chronicNames)) {
+    chronic.push(educationCatalog.chronic.obesity);
+  }
+  if(/transportation|affordability|childcare|rural/.test(barrierText)) {
+    chronic.push(educationCatalog.chronic.sdoh);
+  }
+  if(/refill|pending|open gap|not yet picked up|access barrier/.test(medText)) {
+    chronic.push(educationCatalog.chronic.meds);
+  }
+
+  return {
+    lifestyle: dedupeVideos(lifestyle).slice(0,6),
+    chronic: dedupeVideos(chronic).slice(0,6)
+  };
+}
+
+function loadDummyLifestyleData(p){
+  const data = patientLifestyleData[p.name] || {fv:10, home:5, sugar:3, fast:3, cardio:75, strength:30, brain:20, stress:30};
+  Object.entries({fv:'fv', home:'home', sugar:'sugar', fast:'fast', cardio:'cardio', strength:'strength', brain:'brain', stress:'stress'}).forEach(([key,id]) => {
+    const el = document.getElementById(id);
+    if(el) el.value = data[key];
+  });
+  updateLifestyle();
+}
+
+function renderEducationLibrary(p){
+  const groups = getPatientEducation(p);
+  const lifestyleEl = document.getElementById('lifestyleEduList');
+  const chronicEl = document.getElementById('chronicEduList');
+  if(lifestyleEl) lifestyleEl.innerHTML = groups.lifestyle.map(renderVideoCard).join('');
+  if(chronicEl) chronicEl.innerHTML = groups.chronic.map(renderVideoCard).join('');
+}
+
 selectPatient(0);
+
+
+function lifestyleStatus(type, val){
+  if(type==="fv"){ if(val < 14) return "below"; if(val <= 35) return "meeting"; return "above"; }
+  if(type==="home"){ if(val < 5) return "below"; if(val <= 10) return "meeting"; return "above"; }
+  if(type==="sugar"){ if(val <= 2) return "meeting"; return "above"; }
+  if(type==="fast"){ if(val <= 2) return "meeting"; return "above"; }
+  if(type==="cardio"){ if(val < 150) return "below"; if(val <= 300) return "meeting"; return "above"; }
+  if(type==="strength"){ if(val < 75) return "below"; if(val <= 150) return "meeting"; return "above"; }
+  if(type==="brain"){ if(val < 30) return "below"; if(val <= 120) return "meeting"; return "above"; }
+  if(type==="stress"){ if(val < 30) return "below"; if(val <= 120) return "meeting"; return "above"; }
+  return "meeting";
+}
+
+
+function updateLifestyle() {
+  const getVal = id => {
+    const el = document.getElementById(id);
+    return el ? Number(el.textContent || 0) : 0;
+  };
+  const setStatus = (id, type, value) => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    const status = lifestyleStatus(type, value);
+    el.className = "lifestyle-status " + status;
+    el.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+  };
+
+  const fv = getVal("fv");
+  const home = getVal("home");
+  const sugar = getVal("sugar");
+  const fast = getVal("fast");
+  const cardio = getVal("cardio");
+  const strength = getVal("strength");
+  const brain = getVal("brain");
+  const stress = getVal("stress");
+
+  setStatus("fvStatus", "fv", fv);
+  setStatus("homeStatus", "home", home);
+  setStatus("sugarStatus", "sugar", sugar);
+  setStatus("fastStatus", "fast", fast);
+  setStatus("cardioStatus", "cardio", cardio);
+  setStatus("strengthStatus", "strength", strength);
+  setStatus("brainStatus", "brain", brain);
+  setStatus("stressStatus", "stress", stress);
+
+  const summary = document.getElementById("lifestyleSummaryText");
+  if(summary){
+    summary.textContent = `This week: ${fv} fruit and vegetable servings, ${home} home cooked meals, ${sugar} sugary drinks, ${fast} fast or processed food servings, ${cardio} cardio minutes, ${strength} strength minutes, ${brain} brain game minutes, and ${stress} stress reduction minutes.`;
+  }
+}
+
+function bindLifestyleInputs(){
+  updateLifestyle();
+}
+
+function toggleEdu(id){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.style.display = el.style.display === "block" ? "none" : "block";
+}
+
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", bindLifestyleInputs);
+} else {
+  bindLifestyleInputs();
+}
+
+function loadDummyLifestyleData() {
+  const data = {
+    fv: 14,
+    home: 6,
+    sugar: 6,
+    fast: 5,
+    cardio: 45,
+    strength: 20,
+    brain: 25,
+    stress: 30
+  };
+
+  Object.entries(data).forEach(([id, value]) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  });
+
+  updateLifestyle();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  loadDummyLifestyleData();
+  renderCareTeam(patients[0]);
+renderTopProblems(patients[0]);
+});
+
 </script>
 </div>
 </body>
