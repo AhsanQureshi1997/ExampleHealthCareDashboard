@@ -394,14 +394,14 @@ h1{
   gap:10px;
 }
 .list-row{
-  border:1px solid #dde4ef;
-  border-radius:14px;
-  padding:12px;
+  border:1px solid #d6deea;
+  border-radius:16px;
+  padding:14px 16px;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:10px;
-  background:#fff;
+  gap:14px;
+  background:#fcfdff;
 }
 .list-name{
   font-size:16px;
@@ -413,15 +413,18 @@ h1{
   font-size:13px;
 }
 .status{
-  padding:7px 11px;
+  min-width:110px;
+  text-align:center;
+  padding:8px 12px;
   border-radius:999px;
-  font-size:11px;
-  font-weight:900;
+  font-size:12px;
+  font-weight:800;
   white-space:nowrap;
+  letter-spacing:.01em;
 }
-.status.good{background:#e7f7ee; color:#166534}
-.status.warn{background:#fff4db; color:#92400e}
-.status.bad{background:#fde8e8; color:#991b1b}
+.status.good{background:#eaf6ef; color:#256845}
+.status.warn{background:#f8efdb; color:#9a6400}
+.status.bad{background:#f9e7e7; color:#b42318}
 .chart-grid{
   display:grid;
   grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));
@@ -1168,9 +1171,10 @@ html, body { height: 100%; margin: 0; }
         </div>
 
         <div class="metric-grid">
-          <div class="metric">
-            <div class="metric-label">Risk level</div>
-            <div class="metric-value" id="riskLevelMetric">High</div>
+          <div class="metric clickable" onclick="openExplain('risk')">
+            <div class="metric-label">Risk</div>
+            <div class="metric-value" id="riskLevelMetric">High risk</div>
+            
           </div>
           <div class="metric">
             <div class="metric-label">Open care gaps</div>
@@ -1180,9 +1184,10 @@ html, body { height: 100%; margin: 0; }
             <div class="metric-label">Shared tasks</div>
             <div class="metric-value" id="tasksMetric">5</div>
           </div>
-          <div class="metric">
-            <div class="metric-label">Trend status</div>
-            <div class="metric-value" id="trendMetric">Declining</div>
+          <div class="metric clickable" onclick="openExplain('trend')">
+            <div class="metric-label">Trend</div>
+            <div class="metric-value" id="trendMetric">Worsening</div>
+            
           </div>
         </div>
 
@@ -2338,16 +2343,25 @@ function renderAlerts(alerts){
     </div>
   `).join("");
 }
+function simplifyStatusLabel(tone, label){
+  const raw = String(label || '').toLowerCase();
+  if (tone === 'bad') return 'Needs action';
+  if (tone === 'warn') return raw.includes('unknown') ? 'Review' : 'Monitor';
+  if (tone === 'good') return 'OK';
+  return label || '';
+}
 function renderStatusList(items, type="standard"){
-  return items.map((item, idx) => `
+  return items.map((item, idx) => {
+    const pillLabel = simplifyStatusLabel(item[2], item[3]);
+    return `
     <div class="list-row ${type === 'preventive' ? 'clickable' : ''}" ${type === 'preventive' ? `onclick="openPreventiveMetric(${idx})"` : ''}>
       <div>
         <div class="list-name">${item[0]}</div>
         <div class="list-desc">${item[1]}</div>
       </div>
-      <div class="status ${item[2]}">${item[3]}</div>
+      <div class="status ${item[2]}">${pillLabel}</div>
     </div>
-  `).join("");
+  `}).join("");
 }
 function renderTimeline(items){
   return items.map(e => `
@@ -2514,6 +2528,58 @@ function showToast(msg){
   clearTimeout(window.toastTimer);
   window.toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
 }
+
+function formatRiskLabel(risk){
+  return risk === "High" ? "High risk" : risk === "Medium" ? "Moderate risk" : "Lower risk";
+}
+function formatTrendLabel(trend){
+  return trend === "Declining" ? "Worsening" : trend === "Improving" ? "Improving" : trend;
+}
+function riskWhyText(p){
+  const reasons = [];
+  if(/discharge/i.test(p.meta) || /discharge/i.test(p.shortLine || '')) reasons.push('recent discharge and active transition-of-care needs');
+  if(p.conditions?.length) reasons.push(p.conditions.slice(0,3).join(', ').toLowerCase());
+  if(p.openGaps) reasons.push(`${p.openGaps} open care gap${p.openGaps===1?'':'s'}`);
+  const badAlerts = (p.alerts||[]).filter(a => a.tone === 'bad' || a.tone === 'warn').slice(0,2).map(a => a.title.toLowerCase());
+  reasons.push(...badAlerts);
+  return reasons.slice(0,3).join(' • ');
+}
+function trendWhyText(p){
+  const points = [];
+  const badAlerts = (p.alerts||[]).filter(a => a.tone === 'bad' || a.tone === 'warn').map(a => a.title);
+  points.push(...badAlerts.slice(0,2));
+  if(p.wearableNarrative) points.push(p.wearableNarrative);
+  return points.slice(0,2).join(' • ');
+}
+function openExplain(type){
+  const p = patients[selected];
+  if(type === 'risk'){
+    const items = [];
+    if(/discharge/i.test(p.meta) || /discharge/i.test(p.shortLine || '')) items.push('Recent discharge or recent high-risk transition of care');
+    if(p.conditions?.length) items.push('Active conditions: ' + p.conditions.join(', '));
+    items.push(`${p.openGaps} open care gap${p.openGaps===1?'':'s'} and ${p.sharedTasks} active shared task${p.sharedTasks===1?'':'s'}`);
+    items.push(...(p.alerts||[]).filter(a => a.tone === 'bad' || a.tone === 'warn').slice(0,3).map(a => `${a.title} — ${a.sub}`));
+    const next = (p.tasks||[]).slice(0,2).map(t => `${t[0]}: ${t[1]}`);
+    openModal('Why this risk level?', `${p.name} · risk drivers`, `
+      <div class="list">${items.map(x => `<div class="list-row"><div><div class="list-name">${x}</div></div></div>`).join('')}</div>
+      <div style="height:12px"></div>
+      <div class="block-title">Suggested next actions</div>
+      <div class="list">${next.map(x => `<div class="list-row"><div><div class="list-name">${x}</div></div></div>`).join('')}</div>
+    `);
+    return;
+  }
+  if(type === 'trend'){
+    const items = [];
+    items.push(...(p.alerts||[]).filter(a => a.tone === 'bad' || a.tone === 'warn').slice(0,3).map(a => `${a.title} — ${a.sub}`));
+    if(p.wearableNarrative) items.push(p.wearableNarrative);
+    const trendCharts = (p.trendCharts||[]).slice(0,2).map(ch => Array.isArray(ch) ? ch[0] : ch.title);
+    if(trendCharts.length) items.push('Most relevant trend views: ' + trendCharts.join(', '));
+    openModal('Why this trend status?', `${p.name} · trend explanation`, `
+      <div class="list">${items.map(x => `<div class="list-row"><div><div class="list-name">${x}</div></div></div>`).join('')}</div>
+    `);
+  }
+}
+
 function openModal(title, subtitle, bodyHtml){
   document.getElementById('modalTitle').textContent = title;
   document.getElementById('modalSubtitle').textContent = subtitle || '';
@@ -2687,10 +2753,10 @@ function selectPatient(i){
   document.getElementById("heroRisk").textContent = p.riskLabel;
   document.getElementById("heroRisk").style.background = p.risk === "High" ? "#fbe9e7" : "#fff2dd";
   document.getElementById("heroRisk").style.color = p.risk === "High" ? "#c7371b" : "#b36b00";
-  document.getElementById("riskLevelMetric").textContent = p.risk;
+  document.getElementById("riskLevelMetric").textContent = formatRiskLabel(p.risk);
   document.getElementById("gapsMetric").textContent = p.openGaps;
   document.getElementById("tasksMetric").textContent = p.sharedTasks;
-  document.getElementById("trendMetric").textContent = p.trend;
+  document.getElementById("trendMetric").textContent = formatTrendLabel(p.trend);
   document.getElementById("alignedTeams").textContent = p.teamsAligned + " teams aligned";
   document.getElementById("prioritySignals").textContent = p.prioritySignals + " priority signals";
   document.getElementById("goalsList").innerHTML = renderBulletItems(p.goals, "green");
