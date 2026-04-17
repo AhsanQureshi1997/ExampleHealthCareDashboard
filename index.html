@@ -1144,6 +1144,79 @@ h1{
   padding:10px 8px;
 }
 
+
+.trial-pill{
+  background:#eef2ff;
+  color:#3b4fb8;
+  border:1px solid #cfd8ff;
+}
+.trial-pill.enrolled{
+  background:#eaf6ef;
+  color:#256845;
+  border:1px solid #cfe7d7;
+}
+.trial-pill.screening{
+  background:#fff4db;
+  color:#9a6400;
+  border:1px solid #ead8aa;
+}
+
+
+.trial-match-card{
+  border:1px solid #dbe3f1;
+  border-radius:14px;
+  padding:12px 14px;
+  background:#fcfdff;
+}
+.trial-match-title{
+  font-size:15px;
+  font-weight:900;
+  margin-bottom:4px;
+}
+.trial-match-sub{
+  color:#62768f;
+  font-size:13px;
+  line-height:1.4;
+}
+.trial-match-action{
+  margin-top:8px;
+  font-size:12px;
+  font-weight:800;
+  color:#34506e;
+}
+.trial-match-pill.enrolled{background:#eaf6ef;color:#256845;border:1px solid #cfe7d7;}
+.trial-match-pill.screening{background:#fff4db;color:#9a6400;border:1px solid #ead8aa;}
+.trial-match-pill{
+  display:inline-block;
+  margin-top:8px;
+  padding:6px 10px;
+  border-radius:999px;
+  background:#eef2ff;
+  color:#3b4fb8;
+  border:1px solid #cfd8ff;
+  font-size:11px;
+  font-weight:900;
+}
+
+.clickable-pill{
+  cursor:pointer;
+  transition:.12s ease;
+}
+.clickable-pill:hover{
+  transform:translateY(-1px);
+  box-shadow:0 8px 18px rgba(25,48,86,.08);
+}
+.trial-note{
+  margin-top:10px;
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid #dde4ef;
+  background:#fbfcff;
+  font-size:13px;
+  line-height:1.4;
+  color:#42566d;
+}
+
 html, body { height: 100%; margin: 0; }
 .app-container { min-height: 100vh; display: flex; flex-direction: column; background:#ffffff; }
 
@@ -1281,6 +1354,17 @@ html, body { height: 100%; margin: 0; }
             </div>
           </div>
           <div class="list" id="topProblemsList"></div>
+        </div>
+
+        <div class="panel content-panel" style="margin-top:16px;">
+          <div class="header-row">
+            <div>
+              <div class="content-title">Possible clinical trial matches</div>
+              <div class="content-sub">Research studies that may fit this patient and still need coordinator review.</div>
+            </div>
+            <div class="count-pill" id="trialMatchesCount">0 possible matches</div>
+          </div>
+          <div class="list" id="trialMatchesList"></div>
         </div>
 
         <div class="grid2">
@@ -1601,6 +1685,7 @@ html, body { height: 100%; margin: 0; }
                   <span class="patient-big-pill patient-status-pill" id="patientFacingStatusPill">Needs attention</span>
                   <span class="patient-big-pill" id="patientFacingVisitPill">Visit still needed</span>
                   <span class="patient-big-pill" id="patientFacingSupportPill">Care team helping now</span>
+                  <span class="patient-big-pill" id="patientFacingTrialPill">Not in a clinical trial</span>
                 </div>
               </div>
             </div>
@@ -1634,7 +1719,7 @@ html, body { height: 100%; margin: 0; }
 
           <div class="panel patient-card-panel">
             <div class="patient-card-title">What your care team is doing</div>
-            <div class="patient-card-sub">So the patient can see the shared plan, not just their own tasks.</div>
+            <div class="patient-card-sub">What your care team is doing to help you.</div>
             <div class="patient-team-list" id="patientTeamActions"></div>
           </div>
         </div>
@@ -1730,6 +1815,8 @@ html, body { height: 100%; margin: 0; }
                 <th>Latest A1c</th>
                 <th>Latest LDL</th>
                 <th>Latest BP</th>
+                <th>Clinical trial</th>
+                <th>Possible trial match</th>
                 <th>Next action</th>
               </tr>
             </thead>
@@ -1760,6 +1847,8 @@ html, body { height: 100%; margin: 0; }
 const patients = [
   {
     name:"Maria Reyes",
+    clinicalTrial:{status:"Enrolled", label:"Enrolled", study:"Heart Failure Recovery Study", description:"Home monitoring and recovery support study for adults after heart failure hospitalization.", site:"Banner Heart Institute", coordinator:"Alicia Gomez, RN"},
+    possibleTrialMatches:[{name:"Diabetes Transition Support Study", reason:"Type 2 diabetes with recent hospitalization and active outpatient follow-up.", action:"Ask research coordinator to review inclusion criteria.", plain:"A research study focused on diabetes recovery support after hospital discharge."}],
     initials:"MR",
     meta:"58 y/o F · Rural Pinal County · AHCCCS · Discharged 4 days ago",
     shortMeta:"58 y/o F · Rural Pinal County",
@@ -1846,6 +1935,8 @@ const patients = [
   },
   {
     name:"James Lee",
+    clinicalTrial:{status:"None", label:"Not in trial", study:"", description:"", site:"", coordinator:""},
+    possibleTrialMatches:[{name:"COPD Recovery Coaching Study", reason:"Recent COPD exacerbation, adult age, and ongoing outpatient follow-up.", action:"Offer research screening through pulmonary clinic.", plain:"A study looking at recovery and breathing support after a flare."}],
     initials:"JL",
     meta:"44 y/o M · South Phoenix · Uninsured · ED discharge 6 days ago",
     shortMeta:"44 y/o M · South Phoenix",
@@ -1923,6 +2014,8 @@ const patients = [
   },
   {
     name:"Aaliyah Khan",
+    clinicalTrial:{status:"Screening", label:"Screening", study:"Postpartum Blood Pressure Monitoring Study", description:"Remote blood pressure monitoring study for patients recovering after delivery.", site:"University Women\'s Health Research Program", coordinator:"Monica Chen, MPH"},
+    possibleTrialMatches:[{name:"Postpartum Mood and Recovery Study", reason:"Recent postpartum discharge with behavioral health follow-up needs.", action:"Discuss optional screening after blood-pressure study review.", plain:"A study about recovery and emotional wellness after childbirth."}],
     initials:"AK",
     meta:"29 y/o F · Rural Maricopa fringe · Medicaid · Postpartum discharge 8 days ago",
     shortMeta:"29 y/o F · Rural Maricopa fringe",
@@ -2001,6 +2094,8 @@ const patients = [
   }  ,
   {
     name:"Daniel Brooks",
+    clinicalTrial:{status:"Enrolled", label:"Enrolled", study:"Behavioral Health Digital Support Study", description:"Study testing digital check-ins and support between behavioral health visits.", site:"Phoenix Community Mental Health Network", coordinator:"Priya Shah, LCSW"},
+    possibleTrialMatches:[{name:"Sleep and Mood Monitoring Study", reason:"Mood symptoms with worsening sleep trend over the last several weeks.", action:"Behavioral health research team can review overlap with current enrollment.", plain:"A study looking at sleep and mood patterns over time."}],
     initials:"DB",
     meta:"36 y/o M · Urban Phoenix · Medicaid · Behavioral health follow-up",
     shortMeta:"36 y/o M · Urban Phoenix",
@@ -2891,61 +2986,111 @@ function renderPatientFacingList(){
 
 function renderPatientFacingView(){
   const p = patients[selected];
-  const content = patientFacingContent[p.name];
+  const content = patientFacingContent[p.name] || {
+    headline: p.name + ' care plan',
+    subtitle: 'Here is what to do and what to watch for this week.',
+    status: 'Needs attention',
+    visit: 'Follow-up may be needed',
+    support: 'Care team helping now',
+    focus: 'Recovery',
+    actions: [],
+    team: [],
+    warnings: [],
+    summary: []
+  };
   const team = careTeams[p.name] || [];
-  if(!content) return;
-  document.getElementById('patientFacingAvatar').textContent = p.initials;
-  document.getElementById('patientFacingHeadline').textContent = content.headline;
-  document.getElementById('patientFacingSubtitle').textContent = content.subtitle;
-  document.getElementById('patientFacingStatusPill').textContent = content.status;
-  document.getElementById('patientFacingVisitPill').textContent = content.visit;
-  document.getElementById('patientFacingSupportPill').textContent = content.support;
-  document.getElementById('patientFacingGaps').textContent = p.openGaps;
-  document.getElementById('patientFacingTeamCount').textContent = team.length;
-  document.getElementById('patientFacingFocus').textContent = content.focus;
-  document.getElementById('patientActionsList').innerHTML = content.actions.map(item => `
+  const education = getOfficialPatientEducation(p);
+
+  const setText = (id, value) => {
+    const el = document.getElementById(id);
+    if(el) el.textContent = value;
+  };
+  const setHTML = (id, value) => {
+    const el = document.getElementById(id);
+    if(el) el.innerHTML = value;
+  };
+
+  setText('patientFacingAvatar', p.initials);
+  setText('patientFacingHeadline', content.headline);
+  setText('patientFacingSubtitle', content.subtitle);
+  setText('patientFacingStatusPill', content.status);
+  setText('patientFacingVisitPill', content.visit);
+  setText('patientFacingSupportPill', content.support);
+  setText('patientFacingGaps', String(p.openGaps));
+  setText('patientFacingTeamCount', String(team.length));
+  setText('patientFacingFocus', content.focus);
+
+  const trialPill = document.getElementById('patientFacingTrialPill');
+  if(trialPill){
+    trialPill.textContent = p.clinicalTrial && p.clinicalTrial.status !== 'None'
+      ? `Clinical trial: ${formatTrialText(p.clinicalTrial)}`
+      : 'Not in a clinical trial';
+    trialPill.className = `patient-big-pill trial-pill clickable-pill ${formatTrialClass(p.clinicalTrial?.status)}`;
+    trialPill.onclick = () => openTrialModal();
+  }
+  setText('patientFacingTrialNote', formatTrialDetail(p.clinicalTrial));
+  setHTML('patientFacingTrialMatches', (p.possibleTrialMatches || []).length ? (p.possibleTrialMatches || []).map(m => `
+    <div class="patient-check">
+      <div class="patient-check-icon">i</div>
+      <div>
+        <div class="patient-check-title">${m.name}</div>
+        <div class="patient-check-sub">${m.plain}</div>
+      </div>
+    </div>`).join('') : `
+    <div class="patient-summary-item">
+      <div class="patient-check-title">No research studies listed right now</div>
+      <div class="patient-summary-sub">Your care team can tell you if any studies become relevant later.</div>
+    </div>`);
+
+  setHTML('patientActionsList', (content.actions || []).map(item => `
     <div class="patient-check">
       <div class="patient-check-icon">✓</div>
       <div>
         <div class="patient-check-title">${item[0]}</div>
         <div class="patient-check-sub">${item[1]}</div>
       </div>
-    </div>`).join('');
-  document.getElementById('patientTeamActions').innerHTML = content.team.map(item => `
+    </div>`).join(''));
+
+  setHTML('patientTeamActions', (content.team || []).map(item => `
     <div class="patient-team-item">
       <div class="patient-team-role">${item[0]}</div>
       <div class="patient-team-doing">${item[1]}</div>
-    </div>`).join('');
-  document.getElementById('patientFacingCareTeam').innerHTML = team.map(member => `
+    </div>`).join(''));
+
+  setHTML('patientFacingCareTeam', team.map(member => `
     <div class="care-team-card">
       <div class="care-team-role">${member.role}</div>
       <div class="care-team-name">${member.name}</div>
       <div class="care-team-meta">${member.meta}</div>
       <span class="care-team-pill">${member.tag}</span>
-    </div>`).join('');
-  document.getElementById('patientWarningsList').innerHTML = content.warnings.map(item => `
+    </div>`).join(''));
+
+  setHTML('patientWarningsList', (content.warnings || []).map(item => `
     <div class="patient-warning">
       <div class="patient-warning-title">${item[0]}</div>
       <div class="patient-warning-sub">${item[1]}</div>
-    </div>`).join('');
-  document.getElementById('patientSimpleSummary').innerHTML = content.summary.map(item => `
+    </div>`).join(''));
+
+  setHTML('patientSimpleSummary', (content.summary || []).map(item => `
     <div class="patient-summary-item">
       <div class="patient-check-title">${item[0]}</div>
       <div class="patient-summary-sub">${item[1]}</div>
-    </div>`).join('');
-  document.getElementById('patientEducationGrid').innerHTML = content.education.map(item => `
-    <div class="patient-edu-card">
+    </div>`).join(''));
+
+  setHTML('patientEducationGrid', education.map(item => `
+    <div class="patient-edu-card" ${item.title === 'Heat illness prevention' ? 'style="border:2px solid #f5d7a1; background:#fffaf0;"' : ''}>
       <div class="patient-edu-media">
         <div class="patient-edu-media-inner">
-          <div class="patient-edu-kicker">Patient education</div>
-          <div class="patient-edu-title">${item[0]}</div>
-          <div class="patient-edu-copy">${item[1]}</div>
-          <a class="patient-edu-button" href="${item[2]}" target="_blank" rel="noopener noreferrer">Watch video</a>
+          <div class="patient-edu-kicker">${item.kicker}</div>
+          <div class="patient-edu-title">${item.title}</div>
+          <div class="patient-edu-copy">${item.copy}</div>
+          <a class="patient-edu-button" href="${item.url}" target="_blank" rel="noopener noreferrer">Open resource</a>
         </div>
       </div>
-      <div class="patient-edu-title">${item[0]}</div>
-      <div class="patient-edu-copy">${item[1]}</div>
-    </div>`).join('');
+      <div class="patient-edu-title">${item.title}</div>
+      <div class="patient-edu-copy">${item.copy}</div>
+    </div>`).join(''));
+
   renderPatientFacingList();
 }
 
@@ -3002,6 +3147,14 @@ function renderPopulationSummary(rows){
   const preventive = rows.filter(r => r.tags.includes('preventive')).length;
   const maternal = rows.filter(r => r.tags.includes('maternal')).length;
   const substance = rows.filter(r => r.tags.includes('substance')).length;
+  const trial = rows.filter(r => {
+    const t = patients[r.patientIndex].clinicalTrial;
+    return t && t.status && t.status !== 'None';
+  }).length;
+  const trialMatches = rows.filter(r => {
+    const m = patients[r.patientIndex].possibleTrialMatches || [];
+    return m.length > 0;
+  }).length;
 
   document.getElementById('populationSummary').innerHTML = [
     ['Patients in queue', rows.length, 'Filtered outreach cohort'],
@@ -3009,6 +3162,8 @@ function renderPopulationSummary(rows){
     ['Post-discharge gaps', followup, 'No closed follow-up yet'],
     ['Chronic instability', uncontrolled, 'A1c, BP, CHF, COPD issues'],
     ['Preventive gaps', preventive, 'Screening or immunization work'],
+    ['Clinical trial', trial, 'Enrolled or screening'],
+    ['Possible trial match', trialMatches, 'Patients worth coordinator review'],
     ['Maternal / substance', `${maternal} / ${substance}`, 'Targeted populations']
   ].map(card => `
     <div class="pop-card">
@@ -3035,6 +3190,8 @@ function renderPopulationTable(rows){
         <td>${row.a1c}</td>
         <td>${row.ldl}</td>
         <td>${row.bp}</td>
+        <td><span class="pill trial-pill clickable-pill ${formatTrialClass(p.clinicalTrial?.status)}" onclick="openTrialModal(${row.patientIndex})">${formatTrialText(p.clinicalTrial)}</span></td>
+        <td>${(p.possibleTrialMatches||[]).length ? '<span class="trial-match-pill">Possible match</span>' : '<span class="status good">None</span>'}</td>
         <td>${row.nextAction}</td>
       </tr>
     `;
@@ -3055,13 +3212,186 @@ function renderPopulationView(){
   renderPopulationTable(rows);
 }
 
+
+
+function getOfficialPatientEducation(p){
+  const cards = [
+    {
+      title:'Heat illness prevention',
+      copy:'High temperatures can worsen dehydration, fatigue, and recovery.',
+      url:'https://www.cdc.gov/disasters/extremeheat/index.html',
+      kicker:'Important in hot weather'
+    }
+  ];
+  const text = ((p.conditions||[]).join(' | ') + ' | ' + (p.chronic||[]).map(x => x[0]).join(' | ')).toLowerCase();
+  if(/heart failure|chf/.test(text)){
+    cards.push({
+      title:'Heart failure home care',
+      copy:'Learn when weight gain, swelling, or shortness of breath should trigger a call.',
+      url:'https://www.heart.org/en/health-topics/heart-failure/warning-signs-of-heart-failure',
+      kicker:'Heart care'
+    });
+  }
+  if(/diabetes/.test(text)){
+    cards.push({
+      title:'Managing diabetes',
+      copy:'Simple NIH guidance on checking sugars, medicines, food, and follow-up.',
+      url:'https://www.niddk.nih.gov/health-information/diabetes/overview/managing-diabetes',
+      kicker:'Diabetes'
+    });
+  }
+  if(/hypertension|blood pressure/.test(text)){
+    cards.push({
+      title:'Understanding blood pressure',
+      copy:'CDC guidance on blood pressure, home checks, and why follow-up matters.',
+      url:'https://www.cdc.gov/high-blood-pressure/about/index.html',
+      kicker:'Blood pressure'
+    });
+  }
+  if(/copd|asthma|pulmonary/.test(text)){
+    cards.push({
+      title:'Living with COPD',
+      copy:'Tips on breathing symptoms, medicines, and when to get help.',
+      url:'https://www.nhlbi.nih.gov/health/copd/living-with',
+      kicker:'Breathing'
+    });
+  }
+  if(/mental health|depress|anxiety|behavioral health/.test(text)){
+    cards.push({
+      title:'Caring for your mental health',
+      copy:'Practical NIH information on symptoms, treatment, and getting support.',
+      url:'https://www.nimh.nih.gov/health/topics/caring-for-your-mental-health',
+      kicker:'Mental health'
+    });
+  }
+  return cards.slice(0,3);
+}
+
+function openTrialModal(index){
+  const p = patients[typeof index === 'number' ? index : selected];
+  const trial = p.clinicalTrial;
+  const matches = p.possibleTrialMatches || [];
+  const title = 'Clinical trial status';
+  let subtitle = p.name;
+  let body = '';
+
+  const matchesHtml = matches.length ? `
+    <div style="margin-top:16px;">
+      <div class="detail-title" style="margin-bottom:10px;">Possible trial matches</div>
+      <div class="list">
+        ${matches.map(m => `
+          <div class="list-row">
+            <div>
+              <div class="list-name">${m.name}</div>
+              <div class="list-desc">${m.reason}</div>
+              <div class="trial-match-action">Next step: ${m.action}</div>
+            </div>
+            <span class="trial-match-pill">Needs review</span>
+          </div>`).join('')}
+      </div>
+    </div>` : '';
+
+  if(!trial || !trial.status || trial.status === 'None'){
+    body = `
+      <div class="list">
+        <div class="list-row">
+          <div>
+            <div class="list-name">Not currently in a clinical trial</div>
+            <div class="list-desc">No active research-study participation is listed for this patient.</div>
+          </div>
+        </div>
+      </div>
+      ${matchesHtml}`;
+  } else if(trial.status === 'Screening'){
+    body = `
+      <div class="list">
+        <div class="list-row">
+          <div>
+            <div class="list-name">Screening in progress</div>
+            <div class="list-desc">${trial.study || 'Research study'} is being reviewed for possible participation.</div>
+          </div>
+          <span class="trial-match-pill screening">Screening</span>
+        </div>
+        <div class="list-row">
+          <div>
+            <div class="list-name">Study details</div>
+            <div class="list-desc">${trial.description || 'Study details not listed.'}</div>
+          </div>
+        </div>
+        <div class="list-row">
+          <div>
+            <div class="list-name">Site</div>
+            <div class="list-desc">${trial.site || 'Site not listed'}</div>
+          </div>
+        </div>
+        <div class="list-row">
+          <div>
+            <div class="list-name">Coordinator</div>
+            <div class="list-desc">${trial.coordinator || 'Coordinator not listed'}</div>
+          </div>
+        </div>
+      </div>
+      ${matchesHtml}`;
+  } else {
+    body = `
+      <div class="list">
+        <div class="list-row">
+          <div>
+            <div class="list-name">Currently enrolled</div>
+            <div class="list-desc">${trial.study || 'Research study'}.</div>
+          </div>
+          <span class="trial-match-pill enrolled">Enrolled</span>
+        </div>
+        <div class="list-row">
+          <div>
+            <div class="list-name">Study details</div>
+            <div class="list-desc">${trial.description || 'Study details not listed.'}</div>
+          </div>
+        </div>
+        <div class="list-row">
+          <div>
+            <div class="list-name">Site</div>
+            <div class="list-desc">${trial.site || 'Site not listed'}</div>
+          </div>
+        </div>
+        <div class="list-row">
+          <div>
+            <div class="list-name">Coordinator</div>
+            <div class="list-desc">${trial.coordinator || 'Coordinator not listed'}</div>
+          </div>
+        </div>
+      </div>
+      ${matchesHtml}`;
+  }
+  openModal(title, subtitle, body);
+}
+
+
+function formatTrialClass(status){
+  const value = (status || '').toLowerCase();
+  if(value === 'enrolled') return 'enrolled';
+  if(value === 'screening') return 'screening';
+  return '';
+}
+function formatTrialText(trial){
+  if(!trial || !trial.status || trial.status === 'None') return 'Not in trial';
+  return trial.label || trial.status;
+}
+function formatTrialDetail(trial){
+  if(!trial || !trial.status || trial.status === 'None') return 'Not currently involved in a clinical trial.';
+  if(trial.status === 'Screening') return `Currently being evaluated for ${trial.study}.`;
+  return `Currently participating in ${trial.study}.`;
+}
+
 function selectPatient(i){
   selected = i;
   const p = patients[i];
   document.getElementById("avatar").textContent = p.initials;
   document.getElementById("heroName").textContent = p.name;
   document.getElementById("heroMeta").textContent = p.meta;
-  document.getElementById("heroTags").innerHTML = p.conditions.map(c => `<span class="pill">${c}</span>`).join("");
+  document.getElementById("heroTags").innerHTML =
+    p.conditions.map(c => `<span class="pill">${c}</span>`).join("") +
+    ` <span class="pill trial-pill clickable-pill ${formatTrialClass(p.clinicalTrial?.status)}" onclick="openTrialModal()">Clinical trial: ${formatTrialText(p.clinicalTrial)}</span>`;
   document.getElementById("heroRisk").textContent = p.riskLabel;
   document.getElementById("heroRisk").style.background = p.risk === "High" ? "#fbe9e7" : "#fff2dd";
   document.getElementById("heroRisk").style.color = p.risk === "High" ? "#c7371b" : "#b36b00";
